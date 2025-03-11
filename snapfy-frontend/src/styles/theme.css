@@ -20,4 +20,7 @@
   --color-success: #3ba55d;
   --color-error: #e74c3c;
   --color-warning: #e6a23c;
+
+  --color-border: #2c2c2c;
+  --color-border-hover: #404040;
 }
