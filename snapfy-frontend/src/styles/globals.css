@@ -2,7 +2,7 @@
 
 /* THEME */
 @theme inline {
-  --font-inter: var(--font-inter);
+  --font-worksans: var(--font-worksans);
 }
 
 @theme {
@@ -14,7 +14,7 @@
   --color-accent-green: #26a17b;
   --color-accent-yellow: #f7931a;
 
-  --color-border: #c9c9c9;
+  --color-border: #dadada;
   --color-primary: #0e100e;
   --color-secondary: #5e6a5e;
   --color-muted: #adad9b;
@@ -40,5 +40,5 @@ html {
 }
 
 body {
-  @apply bg-background text-primary font-inter;
+  @apply bg-background text-primary font-worksans;
 }
