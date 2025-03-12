@@ -3,8 +3,9 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import classNames from "classnames";
+
+import CustomConnectButton from "../RainbowKit/CustomConnectButton";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -21,34 +22,33 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-background sticky top-0 z-20 flex h-[80px] w-full justify-center px-5">
-      <div className="flex w-full max-w-[1200px] items-center justify-between">
-        <div className="text-primary w-36 text-2xl font-medium">
-          <Link href={"/"}>Snapfy</Link>
+    <nav className="bg-background sticky top-0 z-20 flex h-[80px] w-full justify-center border-b px-[30px]">
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-7">
+          <Link href={"/"} className="text-accent-pink text-3xl font-bold">
+            Snapfy
+          </Link>
+
+          <ul className="flex items-center gap-5 pt-1">
+            {menus.map((menu) => (
+              <li key={menu.name}>
+                <Link
+                  href={menu.link}
+                  className={classNames(
+                    "hover:text-primary text-lg hover:font-semibold",
+                    pathname === menu.link
+                      ? "font-semibold"
+                      : "text-muted font-medium",
+                  )}
+                >
+                  {menu.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="flex gap-2">
-          {menus.map((menu) => (
-            <Link
-              key={menu.name}
-              href={menu.link}
-              className={classNames(
-                "px-3 text-[17px] font-medium hover:text-white",
-                pathname === menu.link
-                  ? "text-white"
-                  : "bg-transparent text-gray-300",
-              )}
-            >
-              {menu.name}
-            </Link>
-          ))}
-        </div>
-
-        <ConnectButton
-          showBalance={false}
-          accountStatus={"address"}
-          chainStatus={"icon"}
-        />
+        <CustomConnectButton />
       </div>
     </nav>
   );
