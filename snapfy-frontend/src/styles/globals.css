@@ -1,6 +1,26 @@
 @import "tailwindcss";
-@import "./theme.css";
 
+/* THEME */
+@theme inline {
+  --font-inter: var(--font-inter);
+}
+
+@theme {
+  --color-background: #ffffe3;
+  --color-surface: #efefd5;
+
+  --color-accent-pink: #ff007a;
+  --color-accent-blue: #2775ca;
+  --color-accent-green: #26a17b;
+  --color-accent-yellow: #f7931a;
+
+  --color-border: #c9c9c9;
+  --color-primary: #0e100e;
+  --color-secondary: #5e6a5e;
+  --color-muted: #adad9b;
+}
+
+/* GLOBAL STYLE */
 * {
   scroll-behavior: smooth;
   @apply border-border;
@@ -19,10 +39,6 @@ html {
   }
 }
 
-@theme inline {
-  --font-inter: var(--font-inter);
-}
-
 body {
-  @apply bg-background font-inter;
+  @apply bg-background text-primary font-inter;
 }
