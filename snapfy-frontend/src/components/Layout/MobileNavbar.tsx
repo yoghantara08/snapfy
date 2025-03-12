@@ -21,7 +21,7 @@ const MobileNavbar = () => {
   ];
 
   return (
-    <nav className="bg-background sticky top-0 z-20 flex h-[74px] w-full items-center justify-between border-b px-4 shadow-sm">
+    <nav className="bg-background sticky top-0 z-20 flex h-[74px] w-full items-center justify-between border-b px-4">
       <Link className="text-accent-pink text-2xl font-bold" href={"/"}>
         Snapfy
       </Link>
