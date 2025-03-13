@@ -1,7 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ChevronDown } from "lucide-react";
 
 import Button from "../Button/Button";
-import { ChevronDown } from "lucide-react";
 
 const CustomConnectButton = () => {
   return (
