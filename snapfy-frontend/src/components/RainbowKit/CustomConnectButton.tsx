@@ -1,6 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 import Button from "../Button/Button";
+import { ChevronDown } from "lucide-react";
 
 const CustomConnectButton = () => {
   return (
@@ -48,7 +49,7 @@ const CustomConnectButton = () => {
               }
               return (
                 <div style={{ display: "flex", gap: 12 }}>
-                  <Button onClick={openChainModal} type="button">
+                  {/* <Button onClick={openChainModal} type="button">
                     {chain.hasIcon && (
                       <div
                         style={{
@@ -72,12 +73,16 @@ const CustomConnectButton = () => {
                       </div>
                     )}
                     {chain.name}
-                  </Button>
-                  <Button onClick={openAccountModal} type="button">
+                  </Button> */}
+                  <Button
+                    onClick={openAccountModal}
+                    className="flex items-center gap-1"
+                  >
                     {account.displayName}
                     {/* {account.displayBalance
                       ? ` (${account.displayBalance})`
                       : ""} */}
+                    <ChevronDown />
                   </Button>
                 </div>
               );

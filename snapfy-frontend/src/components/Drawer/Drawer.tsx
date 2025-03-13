@@ -99,7 +99,7 @@ const Drawer = ({
             {overlay && (
               <DialogBackdrop
                 onClick={onClose}
-                className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+                className="bg-opacity-50 fixed inset-0 bg-black transition-opacity"
               />
             )}
           </TransitionChild>
@@ -115,7 +115,7 @@ const Drawer = ({
           >
             <div
               className={classNames(
-                "fixed bg-surface",
+                "bg-surface fixed",
                 positionClasses[position],
                 sizeClasses[position][size],
                 containerClassName,

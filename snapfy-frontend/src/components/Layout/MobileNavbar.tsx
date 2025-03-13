@@ -5,11 +5,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import classNames from "classnames";
 import { MenuIcon, XIcon } from "lucide-react";
 
 import Drawer from "../Drawer/Drawer";
+import CustomConnectButton from "../RainbowKit/CustomConnectButton";
 
 const MobileNavbar = () => {
   const [open, setOpen] = useState(false);
@@ -27,11 +27,7 @@ const MobileNavbar = () => {
       </Link>
 
       <div className="flex items-center gap-3 text-sm">
-        <ConnectButton
-          showBalance={false}
-          accountStatus="address"
-          chainStatus="icon"
-        />
+        <CustomConnectButton />
 
         <MenuIcon
           className="size-7 cursor-pointer"
@@ -65,7 +61,7 @@ const MobileNavbar = () => {
               key={menu.name}
               href={menu.link}
               className={classNames(
-                "hover:bg-primary-active rounded-md px-4 py-2 text-lg font-medium",
+                "hover:bg-primary-active -mx-4 rounded-md px-4 py-2 text-lg font-medium",
                 pathname === menu.link
                   ? "bg-accent-blue/20 text-accent-blue"
                   : "text-muted hover:bg-accent-blue/20 hover:text-accent-blue",
