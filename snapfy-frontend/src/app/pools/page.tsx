@@ -1,5 +1,6 @@
 import React from "react";
 
+import Pools from "@/features/pools/components/Pools/Pools";
 import PoolsHeadline from "@/features/pools/components/PoolsHeadline/PoolsHeadline";
 import PoolsMenuFilter from "@/features/pools/components/PoolsMenuFilter/PoolsMenuFilter";
 import TVLAndVolume from "@/features/pools/components/TVLAndVolume/TVLAndVolume";
@@ -12,6 +13,7 @@ const PoolsPage = () => {
         <TVLAndVolume />
       </section>
       <PoolsMenuFilter />
+      <Pools />
     </div>
   );
 };
