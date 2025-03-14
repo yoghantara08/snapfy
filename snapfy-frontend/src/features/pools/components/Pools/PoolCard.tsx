@@ -1,64 +1,86 @@
 import React from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import Button from "@/components/Button/Button";
+import { formatCurrency } from "@/lib/utils";
+import { calculateAPR } from "@/lib/utils/calculateAPR";
+import { IPoolData } from "@/types";
 
-const PoolCard = () => {
+interface PoolCardProps {
+  poolData: IPoolData;
+  poolVersion: string;
+}
+
+const PoolCard = ({ poolData, poolVersion }: PoolCardProps) => {
+  const poolName =
+    (poolData.token0.symbol === "WETH" ? "ETH" : poolData.token0.symbol) +
+    "/" +
+    (poolData.token1.symbol === "WETH" ? "ETH" : poolData.token1.symbol);
+
   return (
     <div className="shadow-accent-blue/20 w-full space-y-5 rounded-sm border p-4 shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
           <div className="flex">
             <Image
-              src={"/tokens/usdc.svg"}
-              alt="usdc"
+              src={`/tokens/${poolData.token0.symbol}.svg`}
+              alt={poolData.token0.symbol}
               width={50}
               height={50}
               className="size-11 rounded-full"
             />
             <Image
-              src={"/tokens/eth.svg"}
-              alt="eth"
+              src={`/tokens/${poolData.token1.symbol}.svg`}
+              alt={poolData.token1.symbol}
               width={50}
               height={50}
               className="-ml-3 size-11 rounded-full"
             />
           </div>
           <div className="flex flex-col">
-            <h3 className="text-lg font-medium">USDC/ETH</h3>
+            <h3 className="text-lg font-medium">{poolName}</h3>
             <div className="text-accent-blue flex gap-1.5 text-sm">
-              <div className="bg-accent-blue/20 rounded-sm px-2 py-0.5">v2</div>
               <div className="bg-accent-blue/20 rounded-sm px-2 py-0.5">
-                0.3%
+                {poolVersion}
+              </div>
+              <div className="bg-accent-blue/20 rounded-sm px-2 py-0.5">
+                {poolData.feeTier / 10000}%
               </div>
             </div>
           </div>
         </div>
 
-        <div className="text-accent-blue bg-accent-blue/20 text rounded-sm px-2 py-1 font-medium">
-          4.4% APR
+        <div className="text-accent-green bg-accent-green/20 w-fit rounded-sm px-2 py-1 text-sm font-medium">
+          {calculateAPR(
+            poolData.poolDayData[0].feesUSD,
+            poolData.poolDayData[0].tvlUSD,
+          )}
+          % APR
         </div>
       </div>
 
       <div className="bg-accent-blue/20 space-y-4 rounded-sm px-3 py-4">
         <div className="flex justify-between">
           <span>Total Value Locked</span>
-          <span>$22.5M</span>
+          <span>{formatCurrency(poolData.totalValueLockedUSD)}</span>
         </div>
         <div className="flex justify-between">
           <span>24H Volume</span>
-          <span>$905.6K</span>
+          <span>{formatCurrency(poolData.poolDayData[0].volumeUSD)}</span>
         </div>
         <div className="flex justify-between">
           <span>24H Fees</span>
-          <span>$2.7K</span>
+          <span>{formatCurrency(poolData.poolDayData[0].feesUSD)}</span>
         </div>
       </div>
 
-      <Button className="!text-accent-blue !bg-accent-blue/20 hover:!bg-accent-blue/30 w-full">
-        + Add Liquidity
-      </Button>
+      <Link href={`/pools/${poolVersion}/${poolData.id}`}>
+        <Button className="!text-accent-blue !bg-accent-blue/20 hover:!bg-accent-blue/30 w-full">
+          + Add Liquidity
+        </Button>
+      </Link>
     </div>
   );
 };
