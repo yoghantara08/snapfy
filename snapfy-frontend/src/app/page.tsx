@@ -1,7 +1,15 @@
+import React from "react";
+
+import HomeHero from "@/features/home/components/Hero";
+import HowItWork from "@/features/home/components/HowItWork";
+import LaunchApp from "@/features/home/components/LaunchApp";
+
 export default function Home() {
   return (
     <div>
-      <h1 className="font-inter text-text-primary">Hello World</h1>
+      <HomeHero />
+      <HowItWork />
+      <LaunchApp />
     </div>
   );
 }
