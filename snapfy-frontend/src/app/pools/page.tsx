@@ -13,8 +13,10 @@ const PoolsPage = () => {
           <PoolsHeadline />
           <TVLAndVolume />
         </section>
-        <PoolsMenuFilter />
-        <Pools />
+        <section className="space-y-4 md:space-y-6">
+          <PoolsMenuFilter />
+          <Pools />
+        </section>
       </div>
     </div>
   );
