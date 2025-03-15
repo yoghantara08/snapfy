@@ -25,9 +25,12 @@
   --color-opacity2-yellow: rgba(247, 147, 26, 0.4);
 
   --color-border: #dadada;
+  --color-border2: #c9c9c9;
   --color-primary: #0e100e;
   --color-secondary: #8d8d83;
   --color-muted: #adad9b;
+
+  --breakpoint-sx: 450px;
 }
 
 /* GLOBAL STYLE */
@@ -55,4 +58,12 @@ body {
 
 button {
   @apply cursor-pointer;
+}
+
+.poolListGrid {
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+
+  @media only screen and (max-width: 450px) {
+    grid-template-columns: 1fr;
+  }
 }
