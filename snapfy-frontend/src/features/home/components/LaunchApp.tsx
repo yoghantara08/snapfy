@@ -2,34 +2,37 @@ import React from "react";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { MdOutlineElectricBolt } from "react-icons/md";
 
+import Link from "next/link";
+
+import Button from "@/components/Button/Button";
+
 const HomeHero = () => {
   return (
-    <section className="bg-surface flex items-center justify-center py-[6rem]">
-      <div
-        className="bg-background grid w-[90%] grid-cols-1 items-center gap-8 p-9 md:grid-cols-2"
-        style={{ boxShadow: "1px 6px 5px 0px rgba(0,0,0,0.25)" }}
-      >
+    <section className="bg-surface/40 flex items-center justify-center border-t py-[4rem] md:py-[5rem]">
+      <div className="bg-background grid w-full max-w-[1096px] grid-cols-1 items-center gap-4 rounded-sm p-6 shadow-sm sm:gap-6 md:grid-cols-2 md:gap-8 md:p-9">
         <div className="flex flex-col items-center gap-2 sm:items-start">
-          <h2 className="text-accent-pink text-center text-2xl font-bold sm:text-start sm:text-3xl">
+          <h2 className="text-accent-pink text-center text-3xl font-bold sm:text-start">
             Ready to supercharge your liquidity?
           </h2>
-          <p className="text-center sm:text-start">
+          <p className="text-secondary text-center sm:text-start">
             Start earning fees in minutes with our one-click liquidity
             provision. No complex setups, just pure DeFi efficiency.
           </p>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
-            <button className="bg-opacity-pink text-accent-pink flex items-center justify-center gap-3 rounded-[5px] px-8 py-2 font-semibold">
-              Launch App Now
-              <MdOutlineElectricBolt className="text-accent-pink" />
-            </button>
-            <button className="bg-opacity-blue text-accent-blue flex items-center justify-center gap-3 rounded-[5px] px-8 py-2 font-semibold">
+            <Link href={"/pools"}>
+              <Button className="gap-1 !text-lg">
+                Launch App Now
+                <MdOutlineElectricBolt className="text-accent-pink" />
+              </Button>
+            </Link>
+            <Button className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 gap-1 !text-lg">
               Learn More
               <FaLongArrowAltRight className="text-accent-blue" />
-            </button>
+            </Button>
           </div>
-          <p className="text-center sm:text-start">
+          <p className="text-secondary text-center text-sm sm:text-start">
             No credit card required. Start earning in seconds.
           </p>
         </div>
