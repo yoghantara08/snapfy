@@ -12,7 +12,7 @@ const TVLAndVolume = () => {
   const INFOS = [
     {
       title: "Networth",
-      value: "$121.22M",
+      value: "$121.22K",
     },
   ];
 
