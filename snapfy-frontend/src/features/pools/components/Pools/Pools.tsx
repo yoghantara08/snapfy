@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 
+import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
 import useUniswapV3Pools from "@/hooks/useUniswapV3Pools";
 
 import EmptyPool from "../EmptyPool/EmptyPool";
@@ -9,10 +10,13 @@ import PoolCard from "./PoolCard";
 
 const Pools = () => {
   const { data: pools, error, isLoading } = useUniswapV3Pools();
+  const { data } = useUniswapV2Pools();
 
   if (!pools || isLoading) {
     return <>Loading...</>;
   }
+
+  console.log(data);
 
   if (error) {
     return <>Error</>;

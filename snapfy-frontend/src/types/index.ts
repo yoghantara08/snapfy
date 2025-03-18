@@ -1,4 +1,4 @@
-export interface IPoolData {
+export interface IUniswapV3Pool {
   id: string;
   token0: {
     id: string;
@@ -29,4 +29,26 @@ export interface IPoolData {
     feesUSD: string;
     tvlUSD: string;
   }[];
+}
+
+export interface IUniswapV2Pool {
+  id: string;
+  token0: {
+    id: string;
+    symbol: string;
+    decimals: number;
+    name: string;
+  };
+  token1: {
+    id: string;
+    symbol: string;
+    decimals: number;
+    name: string;
+  };
+  reserve0: string;
+  reserve1: string;
+  totalSupply: string;
+  volumeUSD: string;
+  untrackedVolumeUSD: string;
+  txCount: string;
 }

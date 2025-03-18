@@ -4,7 +4,7 @@ import { createClient } from "urql";
 
 import { UNISWAP_V3_POOL_IDS } from "@/constant";
 import { SUBGRAPH_API_KEY, UNISWAP_V3_SUBGRAPH_ID } from "@/constant";
-import { IPoolData } from "@/types";
+import { IUniswapV3Pool } from "@/types";
 
 // Create a new client with the Uniswap V3 subgraph
 const client = createClient({
@@ -55,7 +55,7 @@ const POOL_QUERY = gql`
 // The function fetches the pool data for a given pool ID
 export const fetchUniswapV3Pool = async (
   poolId: string,
-): Promise<IPoolData | null> => {
+): Promise<IUniswapV3Pool | null> => {
   const result = await client.query(POOL_QUERY, { id: poolId }).toPromise();
   return result.data?.pool || null;
 };
@@ -68,7 +68,7 @@ const useUniswapV3Pools = () => {
       const pools = await Promise.all(
         Object.values(UNISWAP_V3_POOL_IDS).map(fetchUniswapV3Pool),
       );
-      return pools.filter((pool): pool is IPoolData => pool !== null);
+      return pools.filter((pool): pool is IUniswapV3Pool => pool !== null);
     },
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,

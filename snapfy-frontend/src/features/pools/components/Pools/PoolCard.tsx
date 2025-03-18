@@ -6,10 +6,10 @@ import Link from "next/link";
 import Button from "@/components/Button/Button";
 import { formatCurrency } from "@/lib/utils";
 import { calculateAPR } from "@/lib/utils/calculateAPR";
-import { IPoolData } from "@/types";
+import { IUniswapV3Pool } from "@/types";
 
 interface PoolCardProps {
-  poolData: IPoolData;
+  poolData: IUniswapV3Pool;
   poolVersion: string;
 }
 
