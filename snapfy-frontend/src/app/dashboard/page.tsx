@@ -9,7 +9,7 @@ import PoolsHeadline from "@/features/dashboard/components/PoolsHeadline/PoolsHe
 import PoolsMenuFilter from "@/features/dashboard/components/PoolsMenuFilter/PoolsMenuFilter";
 
 const DashboardPage = () => {
-  const [pools] = useState([]);
+  const [pools] = useState(["dfkjvn", "sdkfjv"]);
   return (
     <div>
       <div className="sx:px-12 flex w-full flex-col items-start justify-between gap-8 px-4 py-8">
