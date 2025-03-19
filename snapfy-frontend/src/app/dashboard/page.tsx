@@ -9,7 +9,7 @@ import PoolsMenuFilter from "@/features/dashboard/components/PoolsMenuFilter/Poo
 import EmptyPool from "@/features/pools/components/EmptyPool/EmptyPool";
 
 const DashboardPage = () => {
-  const [pools] = useState([]);
+  const [pools] = useState(["dfkjvn", "sdkfjv"]);
   return (
     <div className="mt-6 mb-10 flex w-full justify-center sm:mt-8 lg:mt-12 lg:mb-28">
       <div className="mx-3 w-full max-w-[1070px]">

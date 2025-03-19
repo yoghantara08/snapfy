@@ -1,13 +1,34 @@
 "use client";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import classNames from "classnames";
+import { debounce } from "lodash";
 import { SearchIcon } from "lucide-react";
+
+import {
+  setDashboardSearch,
+  setPoolVersion,
+} from "../../../../redux/reducers/modalSlice";
 
 const MENUS = ["All Pools", "V2", "V3"];
 
 const PoolsMenuFilter = () => {
   const [selectedMenu, setSelectedMenu] = useState(MENUS[0]);
+  const dispatch = useDispatch();
+
+  const handleSelect = (menu: string) => {
+    setSelectedMenu(menu);
+    dispatch(setPoolVersion(menu));
+  };
+
+  const debouncedSearch = debounce((value: string) => {
+    dispatch(setDashboardSearch(value));
+  }, 500);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSearch(e.target.value);
+  };
 
   return (
     <section className="mt-4 lg:mt-6">
@@ -22,7 +43,7 @@ const PoolsMenuFilter = () => {
                 selectedMenu === menu &&
                   "bg-accent-blue/20 text-accent-blue !border-transparent",
               )}
-              onClick={() => setSelectedMenu(menu)}
+              onClick={() => handleSelect(menu)}
             >
               {menu}
             </button>
@@ -35,6 +56,7 @@ const PoolsMenuFilter = () => {
             type="text"
             className="h-full w-[250px] outline-0 placeholder:text-sm"
             placeholder="Search by token name or address..."
+            onChange={(e) => handleSearch(e)}
           />
         </div>
       </div>
