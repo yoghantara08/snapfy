@@ -4,12 +4,14 @@ interface modalState {
   reviewModalV2: boolean;
   poolVersion: string;
   dashboardSearch: string;
+  abi: [];
 }
 
 const initialState: modalState = {
   reviewModalV2: false,
   poolVersion: "All Pools",
   dashboardSearch: "",
+  abi: [],
 };
 
 export const modalSlice = createSlice({
