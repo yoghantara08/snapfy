@@ -66,7 +66,9 @@ const useUniswapV3Pools = () => {
     queryKey: ["uniswapV3Pools"],
     queryFn: async () => {
       const pools = await Promise.all(
-        Object.values(UNISWAP_V3_POOL_IDS).map(fetchUniswapV3Pool),
+        Object.values(UNISWAP_V3_POOL_IDS).map((id) =>
+          fetchUniswapV3Pool(id.toLowerCase()),
+        ),
       );
       return pools.filter((pool): pool is IUniswapV3Pool => pool !== null);
     },

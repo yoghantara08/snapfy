@@ -47,8 +47,14 @@ export interface IUniswapV2Pool {
   };
   reserve0: string;
   reserve1: string;
+  token0Price: string;
+  token1Price: string;
   totalSupply: string;
   volumeUSD: string;
   untrackedVolumeUSD: string;
   txCount: string;
+  reserveUSD: string;
+  tvlUSD: number;
+  dailyVolumeUSD: number;
+  dailyFeesUSD: number;
 }

@@ -1,19 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 import classNames from "classnames";
 import { SearchIcon } from "lucide-react";
 
-const MENUS = ["All Pools", "V2", "V3"];
+interface PoolsMenuFilterProps {
+  menus: string[];
+  selectedMenu: string;
+  setSelectedMenu: (menu: string) => void;
+  search: string;
+  setSearch: (search: string) => void;
+}
 
-const PoolsMenuFilter = () => {
-  const [selectedMenu, setSelectedMenu] = useState(MENUS[0]);
-
+const PoolsMenuFilter = ({
+  menus,
+  selectedMenu,
+  setSelectedMenu,
+  search,
+  setSearch,
+}: PoolsMenuFilterProps) => {
   return (
-    <section className="mt-4 lg:mt-6">
+    <div className="mt-4 lg:mt-6">
       <div className="flex flex-col gap-3 md:flex-row">
         <div className="order-2 flex gap-3 md:order-1">
-          {MENUS.map((menu) => (
+          {menus.map((menu) => (
             <button
               key={menu}
               className={classNames(
@@ -32,13 +42,15 @@ const PoolsMenuFilter = () => {
         <div className="order-1 flex h-9.5 items-center gap-2 rounded-sm border px-4 md:order-2">
           <SearchIcon className="text-secondary size-4" />
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             type="text"
             className="h-full w-[250px] outline-0 placeholder:text-sm"
             placeholder="Search by token name or address..."
           />
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

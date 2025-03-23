@@ -2,7 +2,6 @@
 
 import Pools from "@/features/pools/components/Pools/Pools";
 import PoolsHeadline from "@/features/pools/components/PoolsHeadline/PoolsHeadline";
-import PoolsMenuFilter from "@/features/pools/components/PoolsMenuFilter/PoolsMenuFilter";
 import TVLAndVolume from "@/features/pools/components/TVLAndVolume/TVLAndVolume";
 
 const PoolsPage = () => {
@@ -13,10 +12,7 @@ const PoolsPage = () => {
           <PoolsHeadline />
           <TVLAndVolume />
         </section>
-        <section className="space-y-4 md:space-y-6">
-          <PoolsMenuFilter />
-          <Pools />
-        </section>
+        <Pools />
       </div>
     </div>
   );

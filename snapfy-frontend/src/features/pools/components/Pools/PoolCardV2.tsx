@@ -5,15 +5,15 @@ import Link from "next/link";
 
 import Button from "@/components/Button/Button";
 import { formatCurrency } from "@/lib/utils";
-import { calculateAPR } from "@/lib/utils/calculateAPR";
-import { IUniswapV3Pool } from "@/types";
+import { calculateAPRV2 } from "@/lib/utils/calculateAPR";
+import { IUniswapV2Pool } from "@/types";
 
-interface PoolCardProps {
-  poolData: IUniswapV3Pool;
+interface PoolCardV2Props {
+  poolData: IUniswapV2Pool;
   poolVersion: string;
 }
 
-const PoolCard = ({ poolData, poolVersion }: PoolCardProps) => {
+const PoolCardV2 = ({ poolData, poolVersion }: PoolCardV2Props) => {
   const poolName =
     (poolData.token0.symbol === "WETH" ? "ETH" : poolData.token0.symbol) +
     "/" +
@@ -46,16 +46,16 @@ const PoolCard = ({ poolData, poolVersion }: PoolCardProps) => {
                 {poolVersion}
               </div>
               <div className="bg-accent-blue/20 rounded-sm px-2 py-0.5">
-                {poolData.feeTier / 10000}%
+                0.3%
               </div>
             </div>
           </div>
         </div>
 
         <div className="text-accent-green bg-accent-green/20 w-fit rounded-sm px-2 py-1 text-sm font-medium">
-          {calculateAPR(
-            poolData.poolDayData[0].feesUSD,
-            poolData.poolDayData[0].tvlUSD,
+          {calculateAPRV2(
+            poolData.dailyFeesUSD,
+            parseFloat(poolData.reserveUSD),
           )}
           % APR
         </div>
@@ -64,15 +64,15 @@ const PoolCard = ({ poolData, poolVersion }: PoolCardProps) => {
       <div className="bg-accent-blue/20 space-y-4 rounded-sm px-3 py-4">
         <div className="flex justify-between">
           <span>Total Value Locked</span>
-          <span>{formatCurrency(poolData.totalValueLockedUSD)}</span>
+          <span>{formatCurrency(poolData.reserveUSD)}</span>
         </div>
         <div className="flex justify-between">
           <span>24H Volume</span>
-          <span>{formatCurrency(poolData.poolDayData[0].volumeUSD)}</span>
+          <span>{formatCurrency(poolData.dailyVolumeUSD)}</span>
         </div>
         <div className="flex justify-between">
           <span>24H Fees</span>
-          <span>{formatCurrency(poolData.poolDayData[0].feesUSD)}</span>
+          <span>{formatCurrency(poolData.dailyFeesUSD)}</span>
         </div>
       </div>
 
@@ -85,4 +85,4 @@ const PoolCard = ({ poolData, poolVersion }: PoolCardProps) => {
   );
 };
 
-export default PoolCard;
+export default PoolCardV2;

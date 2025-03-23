@@ -31,13 +31,38 @@ const POOL_QUERY = gql`
       }
       reserve0
       reserve1
+      token0Price
+      token1Price
       totalSupply
       volumeUSD
       untrackedVolumeUSD
       txCount
+      dailyVolumeUSD: volumeUSD @daily
+      reserveUSD
     }
   }
 `;
+
+const PAIR_DAY_DATA_QUERY = gql`
+  query ($id: ID!) {
+    pairDayDatas(
+      first: 1
+      orderBy: date
+      orderDirection: desc
+      where: { pairAddress: $id }
+    ) {
+      dailyVolumeUSD
+      dailyTxns
+    }
+  }
+`;
+
+export const fetchUniswapV2PoolDayData = async (poolId: string) => {
+  const result = await client
+    .query(PAIR_DAY_DATA_QUERY, { id: poolId })
+    .toPromise();
+  return result.data?.pairDayDatas?.[0] || null;
+};
 
 // Fetch the pool data for a given pool ID
 export const fetchUniswapV2Pool = async (
@@ -53,9 +78,19 @@ const useUniswapV2Pools = () => {
     queryKey: ["uniswapV2Pools"],
     queryFn: async () => {
       const pools = await Promise.all(
-        Object.values(UNISWAP_V2_POOL_IDS).map((id) =>
-          fetchUniswapV2Pool(id.toLowerCase()),
-        ),
+        Object.values(UNISWAP_V2_POOL_IDS).map(async (id) => {
+          const pool = await fetchUniswapV2Pool(id.toLowerCase());
+          if (!pool) return null;
+
+          const SWAP_FEE_PERCENTAGE = 0.003; // 0.3%
+
+          const dayData = await fetchUniswapV2PoolDayData(id.toLowerCase());
+
+          const dailyVolumeUSD = parseFloat(dayData?.dailyVolumeUSD || "0");
+          const dailyFeesUSD = dailyVolumeUSD * SWAP_FEE_PERCENTAGE;
+
+          return { ...pool, dailyVolumeUSD, dailyFeesUSD };
+        }),
       );
       return pools.filter((pool): pool is IUniswapV2Pool => pool !== null);
     },
