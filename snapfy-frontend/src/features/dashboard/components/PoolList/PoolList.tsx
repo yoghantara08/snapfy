@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaMinus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 import Image from "next/image";
 
@@ -8,9 +9,11 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { styled } from "@mui/material/styles";
 import Switch, { SwitchProps } from "@mui/material/Switch";
+import { useReadContract, useWriteContract } from "wagmi";
 
 import EtherIcon from "../../../../../public/Image/etherIcon.svg";
 import UsdcIcon from "../../../../../public/Image/usdcIcon.svg";
+import { RootState } from "../../../../redux/store";
 
 const style = {
   position: "absolute",
@@ -64,6 +67,9 @@ const IOSSwitch = styled((props: SwitchProps) => (
 }));
 
 const PoolList = () => {
+  const { writeContract } = useWriteContract();
+  // const { data, writeContract } = useWriteContract();
+  const abi = useSelector((state: RootState) => state.modal.abi);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -74,6 +80,30 @@ const PoolList = () => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState(event.target.checked);
   };
+
+  const handleRemoveLiquidity = () => {
+    writeContract({
+      address: "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+      abi,
+      functionName: "mint",
+      // args: [BigInt(tokenId)],
+    });
+  };
+
+  const ReadPools = () => {
+    const { data } = useReadContract({
+      address: "0x0000",
+      abi: abi,
+      functionName: "balanceOf",
+      args: ["0x03A71968491d55603FFe1b11A9e23eF013f75bCF"],
+    });
+
+    console.log(data);
+  };
+
+  useEffect(() => {
+    ReadPools();
+  }, []);
 
   return (
     <div className="poolListGrid grid w-full gap-8">
@@ -172,6 +202,7 @@ const PoolList = () => {
           </div>
           <button
             disabled={amount === "0"}
+            onClick={handleRemoveLiquidity}
             className="disabled:bg-opacity-blue bg-accent-blue w-full rounded-[10px] px-4 py-3 text-2xl text-white"
           >
             Remove
