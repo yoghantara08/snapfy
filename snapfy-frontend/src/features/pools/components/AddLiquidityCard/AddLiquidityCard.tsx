@@ -7,6 +7,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import classNames from "classnames";
 import { ChevronDownIcon } from "lucide-react";
 
+import Button from "@/components/Button/Button";
 import NumberInput from "@/components/Input/NumberInput";
 import useNumberInput from "@/hooks/useNumberInput";
 
@@ -28,7 +29,7 @@ const AddLiquidityCard = () => {
       {/* INPUT TOKEN */}
       <div className="space-y-1.5">
         <div className="flex items-end justify-between gap-4">
-          <span className="ml-0.5 font-medium">You Send</span>
+          <span className="text-secondary ml-0.5 font-medium">You Send</span>
           <div className="flex items-center justify-center gap-2 text-sm">
             {quickButtons.map((percent) => (
               <button
@@ -98,7 +99,58 @@ const AddLiquidityCard = () => {
         </div>
       </div>
 
+      <div className="mt-5 flex w-full justify-center">
+        <div className="bg-accent-blue/20 text-accent-blue flex size-8 items-center justify-center rounded-full">
+          <ChevronDownIcon className="mt-0.5 size-6.5" />
+        </div>
+      </div>
+
       {/* EST POOL ALLOCATION */}
+      <div className="space-y-1.5">
+        <div className="text-secondary ml-0.5 font-medium">
+          Est. Pool Allocation
+        </div>
+        <div className="flex gap-4">
+          {/* TOKEN 0 */}
+          <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
+            <div className="flex items-center gap-2">
+              <Image
+                src={"/tokens/USDC.svg"}
+                alt="USDC"
+                width={64}
+                height={64}
+                className="size-9 rounded-full"
+              />
+              <span className="font-medium">USDC</span>
+            </div>
+            <div className="-space-y-1 text-end">
+              <div className="text-lg font-medium">1075</div>
+              <div className="text-secondary text-sm">~ $1075</div>
+            </div>
+          </div>
+          {/* TOKEN 1 */}
+          <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
+            <div className="flex items-center gap-2">
+              <Image
+                src={"/tokens/eth.svg"}
+                alt="ETH"
+                width={64}
+                height={64}
+                className="size-9 rounded-full"
+              />
+              <span className="font-medium">ETH</span>
+            </div>
+            <div className="-space-y-1 text-end">
+              <div className="text-lg font-medium">0.5</div>
+              <div className="text-secondary text-sm">~ $1075</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Button className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 mt-2 w-full">
+        Review
+      </Button>
     </div>
   );
 };
