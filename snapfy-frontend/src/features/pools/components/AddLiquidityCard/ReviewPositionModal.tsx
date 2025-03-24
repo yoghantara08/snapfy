@@ -10,12 +10,20 @@ interface ReviewPositionModalProps {
   isOpen: boolean;
   onClose: () => void;
   pool: IUniswapV2Pool;
+  selectedToken: {
+    symbol: string;
+    image: string;
+    address: `0x${string}` | undefined;
+  };
+  amount: number;
 }
 
 const ReviewPositionModal = ({
   isOpen,
   onClose,
   pool,
+  amount,
+  selectedToken,
 }: ReviewPositionModalProps) => {
   const token0symbol =
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
@@ -34,18 +42,17 @@ const ReviewPositionModal = ({
           <div className="text-secondary ml-0.5 font-medium">You Send</div>
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
-              {/* TODO CHANGE IMAGE */}
               <Image
-                src={`/tokens/${pool.token1.symbol}.svg`}
-                alt={pool.token1.symbol}
+                src={selectedToken.image}
+                alt={selectedToken.symbol}
                 width={64}
                 height={64}
                 className="size-9 rounded-full"
               />
-              <span className="font-medium">{pool.token1.symbol}</span>
+              <span className="font-medium">{selectedToken.symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
-              <div className="text-lg font-medium">0</div>
+              <div className="text-lg font-medium">{amount}</div>
               <div className="text-secondary text-sm">~$0.0</div>
             </div>
           </div>

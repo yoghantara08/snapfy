@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { ChevronDownIcon } from "lucide-react";
+import { useAccount, useBalance } from "wagmi";
 
 import Button from "@/components/Button/Button";
 import NumberInput from "@/components/Input/NumberInput";
@@ -20,18 +22,38 @@ interface AddLiquidityCardProps {
 
 const quickButtons = [25, 50, 75, 100];
 const tokenOptions = [
-  { symbol: "ETH", image: "/tokens/eth.svg" },
-  { symbol: "WETH", image: "/tokens/weth.svg" },
-  { symbol: "USDC", image: "/tokens/USDC.svg" },
-  { symbol: "USDT", image: "/tokens/USDT.svg" },
+  {
+    symbol: "ETH",
+    image: "/tokens/eth.svg",
+    address: undefined,
+  },
+  {
+    symbol: "USDC",
+    image: "/tokens/USDC.svg",
+    address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as `0x${string}`,
+  },
 ];
 
 const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
   const { data: pool } = useUniswapV2GetPoolById(poolId);
 
-  const { displayValue, handleInputBlur, handleInputChange } = useNumberInput();
+  const { displayValue, value, handleInputBlur, handleInputChange } =
+    useNumberInput();
   const [selectedToken, setSelectedToken] = useState(tokenOptions[0]);
   const [reviewModal, setReviewModal] = useState(false);
+
+  const { address } = useAccount();
+  const { data: tokenBalance } = useBalance({
+    address,
+    token: selectedToken.address as `0x${string}`,
+  });
+
+  const { data: ethBalance } = useBalance({
+    address,
+  });
+
+  const balance = selectedToken.symbol === "ETH" ? ethBalance : tokenBalance;
+  const balanceFormatted = BigNumber(balance?.formatted || "0").toNumber();
 
   if (!pool) return null;
 
@@ -51,6 +73,11 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
               <button
                 key={percent}
                 className="bg-opacity-blue hover:bg-accent-blue/30 text-accent-blue rounded-sm px-2 py-1"
+                onClick={() =>
+                  handleInputChange(
+                    `${(balanceFormatted * (percent / 100)).toString()}`,
+                  )
+                }
               >
                 {percent}%
               </button>
@@ -86,7 +113,10 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
                     key={option.symbol}
                     as={"div"}
                     className="hover:bg-accent-blue/20 flex w-full cursor-pointer items-center gap-2 px-3 py-2 pr-8"
-                    onClick={() => setSelectedToken(option)}
+                    onClick={() => {
+                      setSelectedToken(option);
+                      handleInputChange("0");
+                    }}
                   >
                     <Image
                       src={option.image}
@@ -109,7 +139,12 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
             />
           </div>
           <div className="text-secondary flex items-center justify-between gap-3 text-sm">
-            <span>Balance: 0.00</span>
+            <span>
+              Balance:{" "}
+              {BigNumber(balance?.formatted || "0").toFixed(
+                selectedToken.symbol === "ETH" ? 6 : 2,
+              )}
+            </span>
             <span>~$0.00</span>
           </div>
         </div>
@@ -175,6 +210,8 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
         isOpen={reviewModal}
         onClose={() => setReviewModal(false)}
         pool={pool}
+        selectedToken={selectedToken}
+        amount={value}
       />
     </div>
   );
