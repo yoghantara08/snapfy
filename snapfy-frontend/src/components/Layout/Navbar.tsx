@@ -36,7 +36,7 @@ const Navbar = () => {
                   href={menu.link}
                   className={classNames(
                     "hover:text-primary text-lg hover:font-semibold",
-                    pathname === menu.link
+                    pathname.includes(menu.link)
                       ? "font-semibold"
                       : "text-muted font-medium",
                   )}
