@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
+import { useUniswapV2Pools } from "@/hooks/useUniswapV2Pools";
 import useUniswapV3Pools from "@/hooks/useUniswapV3Pools";
 
 import EmptyPool from "../EmptyPool/EmptyPool";
@@ -13,13 +13,13 @@ import PoolCardV3 from "./PoolCardV3";
 const MENUS = ["All Pools", "V2", "V3"];
 
 const Pools = () => {
-  const { pools: poolsV2 } = useUniswapV2Pools();
+  const { data: poolsV2 } = useUniswapV2Pools();
   const { data: poolsV3, error, isLoading } = useUniswapV3Pools();
 
   const [search, setSearch] = useState("");
   const [selectedMenu, setSelectedMenu] = useState(MENUS[0]);
 
-  if (!poolsV3 || !poolsV2.data || isLoading) {
+  if (!poolsV3 || !poolsV2 || isLoading) {
     return <>Loading...</>;
   }
 
@@ -38,7 +38,7 @@ const Pools = () => {
       />
       {poolsV3 && poolsV3.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {poolsV2.data.map((pool) => (
+          {poolsV2.map((pool) => (
             <PoolCardV2 key={pool.id} poolData={pool} poolVersion="v2" />
           ))}
           {poolsV3.map((pool) => (

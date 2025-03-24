@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ExternalLinkIcon } from "lucide-react";
 
 import OpenExternalLink from "@/components/OpenExternalLink/OpenExternalLink";
-import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
+import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
 import { transformAddress } from "@/lib/utils";
 
 interface AddLiquidityHeaderProps {
@@ -21,8 +21,7 @@ const AddLiquidityHeader = ({
   poolVersion,
   feeTier,
 }: AddLiquidityHeaderProps) => {
-  const { getPoolById } = useUniswapV2Pools();
-  const pool = getPoolById(poolId);
+  const { data: pool } = useUniswapV2GetPoolById(poolId);
   if (!pool) return null;
 
   const token0symbol =

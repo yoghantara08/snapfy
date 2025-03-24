@@ -17,6 +17,11 @@ const ReviewPositionModal = ({
   onClose,
   pool,
 }: ReviewPositionModalProps) => {
+  const token0symbol =
+    pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
+  const token1symbol =
+    pool.token1.symbol === "WETH" ? "ETH" : pool.token1.symbol;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -29,6 +34,7 @@ const ReviewPositionModal = ({
           <div className="text-secondary ml-0.5 font-medium">You Send</div>
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
+              {/* TODO CHANGE IMAGE */}
               <Image
                 src={`/tokens/${pool.token1.symbol}.svg`}
                 alt={pool.token1.symbol}
@@ -53,13 +59,13 @@ const ReviewPositionModal = ({
             <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
               <div className="flex items-center gap-2">
                 <Image
-                  src={`/tokens/${pool.token0.symbol}.svg`}
-                  alt={pool.token0.symbol}
+                  src={`/tokens/${token0symbol}.svg`}
+                  alt={token0symbol}
                   width={64}
                   height={64}
                   className="size-9 rounded-full"
                 />
-                <span className="font-medium">{pool.token0.symbol}</span>
+                <span className="font-medium">{token0symbol}</span>
               </div>
               <div className="-space-y-1 text-end">
                 <div className="text-lg font-medium">0</div>
@@ -70,13 +76,13 @@ const ReviewPositionModal = ({
             <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
               <div className="flex items-center gap-2">
                 <Image
-                  src={`/tokens/${pool.token1.symbol}.svg`}
-                  alt={pool.token1.symbol}
+                  src={`/tokens/${token1symbol}.svg`}
+                  alt={token1symbol}
                   width={64}
                   height={64}
                   className="size-9 rounded-full"
                 />
-                <span className="font-medium">{pool.token1.symbol}</span>
+                <span className="font-medium">{token1symbol}</span>
               </div>
               <div className="-space-y-1 text-end">
                 <div className="text-lg font-medium">0</div>

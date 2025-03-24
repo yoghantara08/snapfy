@@ -72,9 +72,8 @@ export const fetchUniswapV2Pool = async (
   return result.data?.pair || null;
 };
 
-// Custom Hook to fetch the Uniswap V2 pools on Base network
-const useUniswapV2Pools = () => {
-  const pools = useQuery({
+export const useUniswapV2Pools = () => {
+  return useQuery({
     queryKey: ["uniswapV2Pools"],
     queryFn: async () => {
       const pools = await Promise.all(
@@ -98,12 +97,26 @@ const useUniswapV2Pools = () => {
     refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
-
-  const getPoolById = (poolId: string) => {
-    return pools.data?.find((pool) => pool.id === poolId);
-  };
-
-  return { pools, getPoolById };
 };
 
-export default useUniswapV2Pools;
+export const useUniswapV2GetPoolById = (poolId: string) => {
+  return useQuery({
+    queryKey: ["uniswapV2Pool", poolId],
+    queryFn: async () => {
+      const pool = await fetchUniswapV2Pool(poolId.toLowerCase());
+      if (!pool) return null;
+
+      const SWAP_FEE_PERCENTAGE = 0.003; // 0.3%
+
+      const dayData = await fetchUniswapV2PoolDayData(poolId.toLowerCase());
+
+      const dailyVolumeUSD = parseFloat(dayData?.dailyVolumeUSD || "0");
+      const dailyFeesUSD = dailyVolumeUSD * SWAP_FEE_PERCENTAGE;
+
+      return { ...pool, dailyVolumeUSD, dailyFeesUSD };
+    },
+    staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 5,
+    retry: 2,
+  });
+};

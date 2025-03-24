@@ -10,7 +10,7 @@ import { ChevronDownIcon } from "lucide-react";
 import Button from "@/components/Button/Button";
 import NumberInput from "@/components/Input/NumberInput";
 import useNumberInput from "@/hooks/useNumberInput";
-import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
+import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
 
 import ReviewPositionModal from "./ReviewPositionModal";
 
@@ -27,14 +27,18 @@ const tokenOptions = [
 ];
 
 const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
-  const { getPoolById } = useUniswapV2Pools();
+  const { data: pool } = useUniswapV2GetPoolById(poolId);
 
   const { displayValue, handleInputBlur, handleInputChange } = useNumberInput();
   const [selectedToken, setSelectedToken] = useState(tokenOptions[0]);
   const [reviewModal, setReviewModal] = useState(false);
 
-  const pool = getPoolById(poolId);
   if (!pool) return null;
+
+  const token0symbol =
+    pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
+  const token1symbol =
+    pool.token1.symbol === "WETH" ? "ETH" : pool.token1.symbol;
 
   return (
     <div className="shadow-accent-blue/20 w-full space-y-3 rounded-sm border p-5 shadow">
@@ -127,13 +131,13 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
               <Image
-                src={`/tokens/${pool.token0.symbol}.svg`}
-                alt={pool.token0.symbol}
+                src={`/tokens/${token0symbol}.svg`}
+                alt={token0symbol}
                 width={64}
                 height={64}
                 className="size-9 rounded-full"
               />
-              <span className="font-medium">{pool.token0.symbol}</span>
+              <span className="font-medium">{token0symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
               <div className="text-lg font-medium">0</div>
@@ -144,13 +148,13 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
               <Image
-                src={`/tokens/${pool.token1.symbol}.svg`}
-                alt={pool.token1.symbol}
+                src={`/tokens/${token1symbol}.svg`}
+                alt={token1symbol}
                 width={64}
                 height={64}
                 className="size-9 rounded-full"
               />
-              <span className="font-medium">{pool.token1.symbol}</span>
+              <span className="font-medium">{token1symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
               <div className="text-lg font-medium">0</div>
