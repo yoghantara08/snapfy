@@ -74,7 +74,7 @@ export const fetchUniswapV2Pool = async (
 
 // Custom Hook to fetch the Uniswap V2 pools on Base network
 const useUniswapV2Pools = () => {
-  return useQuery({
+  const pools = useQuery({
     queryKey: ["uniswapV2Pools"],
     queryFn: async () => {
       const pools = await Promise.all(
@@ -98,6 +98,12 @@ const useUniswapV2Pools = () => {
     refetchInterval: 1000 * 60 * 5,
     retry: 2,
   });
+
+  const getPoolById = (poolId: string) => {
+    return pools.data?.find((pool) => pool.id === poolId);
+  };
+
+  return { pools, getPoolById };
 };
 
 export default useUniswapV2Pools;

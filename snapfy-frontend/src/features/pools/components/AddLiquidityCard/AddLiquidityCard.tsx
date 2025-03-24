@@ -10,6 +10,11 @@ import { ChevronDownIcon } from "lucide-react";
 import Button from "@/components/Button/Button";
 import NumberInput from "@/components/Input/NumberInput";
 import useNumberInput from "@/hooks/useNumberInput";
+import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
+
+interface AddLiquidityCardProps {
+  poolId: string;
+}
 
 const quickButtons = [25, 50, 75, 100];
 const tokenOptions = [
@@ -19,10 +24,14 @@ const tokenOptions = [
   { symbol: "USDT", image: "/tokens/USDT.svg" },
 ];
 
-const AddLiquidityCard = () => {
-  const { displayValue, handleInputBlur, handleInputChange } = useNumberInput();
+const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
+  const { getPoolById } = useUniswapV2Pools();
 
+  const { displayValue, handleInputBlur, handleInputChange } = useNumberInput();
   const [selectedToken, setSelectedToken] = useState(tokenOptions[0]);
+
+  const pool = getPoolById(poolId);
+  if (!pool) return null;
 
   return (
     <div className="shadow-accent-blue/20 w-full space-y-3 rounded-sm border p-5 shadow">
@@ -94,7 +103,7 @@ const AddLiquidityCard = () => {
           </div>
           <div className="text-secondary flex items-center justify-between gap-3 text-sm">
             <span>Balance: 0.00</span>
-            <span>~ $0.00</span>
+            <span>~$0.00</span>
           </div>
         </div>
       </div>
@@ -115,34 +124,34 @@ const AddLiquidityCard = () => {
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
               <Image
-                src={"/tokens/USDC.svg"}
-                alt="USDC"
+                src={`/tokens/${pool.token0.symbol}.svg`}
+                alt={pool.token0.symbol}
                 width={64}
                 height={64}
                 className="size-9 rounded-full"
               />
-              <span className="font-medium">USDC</span>
+              <span className="font-medium">{pool.token0.symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
-              <div className="text-lg font-medium">1075</div>
-              <div className="text-secondary text-sm">~ $1075</div>
+              <div className="text-lg font-medium">0</div>
+              <div className="text-secondary text-sm">~$0.0</div>
             </div>
           </div>
           {/* TOKEN 1 */}
           <div className="flex w-full justify-between gap-3 rounded-sm border p-3">
             <div className="flex items-center gap-2">
               <Image
-                src={"/tokens/eth.svg"}
-                alt="ETH"
+                src={`/tokens/${pool.token1.symbol}.svg`}
+                alt={pool.token1.symbol}
                 width={64}
                 height={64}
                 className="size-9 rounded-full"
               />
-              <span className="font-medium">ETH</span>
+              <span className="font-medium">{pool.token1.symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
-              <div className="text-lg font-medium">0.5</div>
-              <div className="text-secondary text-sm">~ $1075</div>
+              <div className="text-lg font-medium">0</div>
+              <div className="text-secondary text-sm">~$0.0</div>
             </div>
           </div>
         </div>

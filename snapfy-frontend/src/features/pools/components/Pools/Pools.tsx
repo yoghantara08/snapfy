@@ -13,13 +13,13 @@ import PoolCardV3 from "./PoolCardV3";
 const MENUS = ["All Pools", "V2", "V3"];
 
 const Pools = () => {
-  const { data: poolsV2 } = useUniswapV2Pools();
+  const { pools: poolsV2 } = useUniswapV2Pools();
   const { data: poolsV3, error, isLoading } = useUniswapV3Pools();
 
   const [search, setSearch] = useState("");
   const [selectedMenu, setSelectedMenu] = useState(MENUS[0]);
 
-  if (!poolsV3 || !poolsV2 || isLoading) {
+  if (!poolsV3 || !poolsV2.data || isLoading) {
     return <>Loading...</>;
   }
 
@@ -38,7 +38,7 @@ const Pools = () => {
       />
       {poolsV3 && poolsV3.length > 0 ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {poolsV2.map((pool) => (
+          {poolsV2.data.map((pool) => (
             <PoolCardV2 key={pool.id} poolData={pool} poolVersion="v2" />
           ))}
           {poolsV3.map((pool) => (
