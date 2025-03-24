@@ -25,7 +25,7 @@ const Navbar = () => {
     <nav className="bg-background sticky top-0 z-20 flex h-[80px] w-full justify-center border-b px-[30px]">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-7">
-          <Link href={"/"} className="text-accent-pink text-3xl font-bold">
+          <Link href={"/"} className="text-accent-pink/80 text-3xl font-bold">
             Snapfy
           </Link>
 

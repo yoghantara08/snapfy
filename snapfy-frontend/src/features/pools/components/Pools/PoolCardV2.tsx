@@ -14,10 +14,11 @@ interface PoolCardV2Props {
 }
 
 const PoolCardV2 = ({ poolData, poolVersion }: PoolCardV2Props) => {
-  const poolName =
-    (poolData.token0.symbol === "WETH" ? "ETH" : poolData.token0.symbol) +
-    "/" +
-    (poolData.token1.symbol === "WETH" ? "ETH" : poolData.token1.symbol);
+  const token0symbol =
+    poolData.token0.symbol === "WETH" ? "ETH" : poolData.token0.symbol;
+  const token1symbol =
+    poolData.token1.symbol === "WETH" ? "ETH" : poolData.token1.symbol;
+  const poolName = token0symbol + "/" + token1symbol;
 
   return (
     <div className="shadow-accent-blue/20 w-full space-y-5 rounded-sm border p-4 shadow">
@@ -25,14 +26,14 @@ const PoolCardV2 = ({ poolData, poolVersion }: PoolCardV2Props) => {
         <div className="flex items-center gap-2">
           <div className="flex">
             <Image
-              src={`/tokens/${poolData.token0.symbol}.svg`}
+              src={`/tokens/${token0symbol}.svg`}
               alt={poolData.token0.symbol}
               width={50}
               height={50}
               className="size-11 rounded-full"
             />
             <Image
-              src={`/tokens/${poolData.token1.symbol}.svg`}
+              src={`/tokens/${token1symbol}.svg`}
               alt={poolData.token1.symbol}
               width={50}
               height={50}
