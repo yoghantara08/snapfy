@@ -161,7 +161,7 @@ const PoolV2 = () => {
   return (
     <div className="flex w-full items-start justify-center">
       <Modal
-        open={open}
+        open={true}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"

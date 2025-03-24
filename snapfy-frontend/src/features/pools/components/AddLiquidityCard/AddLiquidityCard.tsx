@@ -12,6 +12,8 @@ import NumberInput from "@/components/Input/NumberInput";
 import useNumberInput from "@/hooks/useNumberInput";
 import useUniswapV2Pools from "@/hooks/useUniswapV2Pools";
 
+import ReviewPositionModal from "./ReviewPositionModal";
+
 interface AddLiquidityCardProps {
   poolId: string;
 }
@@ -29,6 +31,7 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
 
   const { displayValue, handleInputBlur, handleInputChange } = useNumberInput();
   const [selectedToken, setSelectedToken] = useState(tokenOptions[0]);
+  const [reviewModal, setReviewModal] = useState(false);
 
   const pool = getPoolById(poolId);
   if (!pool) return null;
@@ -157,9 +160,18 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
         </div>
       </div>
 
-      <Button className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 mt-2 w-full">
+      <Button
+        className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 mt-2 w-full"
+        onClick={() => setReviewModal(true)}
+      >
         Review
       </Button>
+
+      <ReviewPositionModal
+        isOpen={reviewModal}
+        onClose={() => setReviewModal(false)}
+        pool={pool}
+      />
     </div>
   );
 };
