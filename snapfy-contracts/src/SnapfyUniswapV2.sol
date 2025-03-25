@@ -4,10 +4,12 @@ pragma solidity ^0.8.23;
 import "./interfaces/IUniswapV2Router02.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IUniswapV2Factory.sol";
+import "./interfaces/IWETH.sol";
 
 contract SnapfyUniswapV2 {
     IUniswapV2Router02 public immutable router;
     address public immutable owner;
+    address public immutable WETH;
 
     event LiquidityProvided(
         address indexed user,
@@ -29,6 +31,7 @@ contract SnapfyUniswapV2 {
             "SnapfyUniswapV2: Router address cannot be zero"
         );
         router = IUniswapV2Router02(_router);
+        WETH = router.WETH();
         owner = msg.sender;
     }
 
@@ -42,6 +45,11 @@ contract SnapfyUniswapV2 {
         uint256 deadline
     ) external payable {
         require(amount > 0, "SnapfyUniswapV2: Amount must be greater than 0");
+        require(
+            tokenA != address(0) && tokenB != address(0),
+            "SnapfyUniswapV2: Invalid token address"
+        );
+
         uint256 fee = amount / 100;
         uint256 remaining = amount - fee;
 
@@ -92,26 +100,15 @@ contract SnapfyUniswapV2 {
         IERC20(pair).transferFrom(msg.sender, address(this), liquidity);
         IERC20(pair).approve(address(router), liquidity);
 
-        if (tokenA == router.WETH() || tokenB == router.WETH()) {
-            router.removeLiquidityETH(
-                tokenA == router.WETH() ? tokenB : tokenA,
-                liquidity,
-                amountAMin,
-                amountBMin,
-                msg.sender,
-                deadline
-            );
-        } else {
-            router.removeLiquidity(
-                tokenA,
-                tokenB,
-                liquidity,
-                amountAMin,
-                amountBMin,
-                msg.sender,
-                deadline
-            );
-        }
+        router.removeLiquidity(
+            tokenA,
+            tokenB,
+            liquidity,
+            amountAMin,
+            amountBMin,
+            msg.sender,
+            deadline
+        );
 
         emit LiquidityWithdrawn(msg.sender, tokenA, tokenB, liquidity);
     }
@@ -123,12 +120,16 @@ contract SnapfyUniswapV2 {
     ) private {
         if (inputToken == outputToken) return;
 
+        if (inputToken == address(0) && outputToken == WETH) {
+            IWETH(WETH).deposit{value: amountIn}();
+            return;
+        }
+
         address[] memory path = new address[](2);
-        path[0] = inputToken == address(0) ? router.WETH() : inputToken;
+        path[0] = inputToken == address(0) ? WETH : inputToken;
         path[1] = outputToken;
 
         if (inputToken == address(0)) {
-            //input token is ETH
             router.swapExactETHForTokens{value: amountIn}(
                 0,
                 path,
@@ -136,7 +137,6 @@ contract SnapfyUniswapV2 {
                 block.timestamp + 300
             );
         } else if (outputToken == address(0)) {
-            //output token is ETH
             IERC20(inputToken).approve(address(router), amountIn);
             router.swapExactTokensForETH(
                 amountIn,
@@ -170,27 +170,16 @@ contract SnapfyUniswapV2 {
         IERC20(tokenA).approve(address(router), amountA);
         IERC20(tokenB).approve(address(router), amountB);
 
-        if (tokenA == router.WETH() || tokenB == router.WETH()) {
-            router.addLiquidityETH{value: amountA}(
-                tokenA == router.WETH() ? tokenB : tokenA,
-                tokenA == router.WETH() ? amountB : amountA,
-                amountAMin,
-                amountBMin,
-                msg.sender,
-                deadline
-            );
-        } else {
-            router.addLiquidity(
-                tokenA,
-                tokenB,
-                amountA,
-                amountB,
-                amountAMin,
-                amountBMin,
-                msg.sender,
-                deadline
-            );
-        }
+        router.addLiquidity(
+            tokenA,
+            tokenB,
+            amountA,
+            amountB,
+            amountAMin,
+            amountBMin,
+            msg.sender,
+            deadline
+        );
     }
 
     receive() external payable {}
