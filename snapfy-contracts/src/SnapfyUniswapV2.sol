@@ -44,6 +44,16 @@ contract SnapfyUniswapV2 {
         _addLiquidityETH(token, tokenReceived, msg.value - half);
     }
 
+    function withdraw(address tokenA, address tokenB, uint256 liquidity) external {
+        address pair = uniswapFactory.getPair(tokenA, tokenB);
+        require(pair != address(0), "SnapfyUniswapV2: Pair does not exist");
+
+        IERC20(pair).transferFrom(msg.sender, address(this), liquidity);
+        IERC20(pair).approve(address(uniswapRouter), liquidity);
+
+        uniswapRouter.removeLiquidity(tokenA, tokenB, liquidity, 0, 0, msg.sender, block.timestamp);
+    }
+
     function _swapTokensForETH(
         address token,
         uint256 amount

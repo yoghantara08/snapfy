@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.28;
 
 import {Test, console} from "forge-std/Test.sol";
 import "../src/SnapfyUniswapV2.sol";
@@ -75,5 +75,48 @@ contract SnapfyUniswapV2Test is Test {
         assertGt(lpBalance, 0, "LP balance should increase");
         assertGt(lpBalanceAfter, lpBalanceBefore, "LP balance should increase");
         assertLt(ethBalanceAfter, ethBalanceBefore, "ETH balance should decrease");
+    }
+
+    function testWithdrawLiquidity() public {
+        uint256 amount = 100 * 1e6;
+        deal(USDC, user, amount);
+
+        address pair = IUniswapV2Factory(snapfy.uniswapRouter().factory()).getPair(WETH, USDC);
+
+        // ADD LIQUIDITY
+        vm.startPrank(user);
+        IERC20(USDC).approve(address(snapfy), amount);
+        snapfy.provideLiquidity(USDC, amount);
+        vm.stopPrank();
+
+        // Check balances before withdrawing
+        uint256 ethBalanceBefore = user.balance;
+        uint256 usdcBalanceBefore = IERC20(USDC).balanceOf(user);
+        uint256 lpBalanceBefore = IERC20(pair).balanceOf(user);
+
+        assertGt(lpBalanceBefore, 0, "LP balance should increase");
+
+        console.log("ETH balance before withdraw: ", ethBalanceBefore);
+        console.log("USDC balance before withdraw: ", usdcBalanceBefore);
+        console.log("LP balance before withdraw: ", lpBalanceBefore);
+
+        // WITHDRAW LIQUIDITY
+        vm.startPrank(user);
+        IERC20(pair).approve(address(snapfy), lpBalanceBefore);
+        snapfy.withdraw(WETH, USDC, lpBalanceBefore);
+        vm.stopPrank();
+
+        // Check balances after withdrawing
+        uint256 ethBalanceAfter = IERC20(WETH).balanceOf(user);
+        uint256 usdcBalanceAfter = IERC20(USDC).balanceOf(user);
+        uint256 lpBalanceAfter = IERC20(pair).balanceOf(user);
+
+        console.log("ETH balance after withdraw: ", ethBalanceAfter);
+        console.log("USDC balance after withdraw: ", usdcBalanceAfter);
+        console.log("LP balance after withdraw: ", lpBalanceAfter);
+
+        assertGt(ethBalanceAfter, ethBalanceBefore, "ETH balance should increase");
+        assertGt(usdcBalanceAfter, usdcBalanceBefore, "USDC balance should increase");
+        assertLt(lpBalanceAfter, lpBalanceBefore, "LP balance should decrease");
     }
 }
