@@ -14,6 +14,14 @@ contract SnapfyUniswapV2 {
 
     error TransferFailed();
 
+    event LiquidityProvided(address indexed user, address inputToken, uint256 amount);
+    event LiquidityWithdrawn(
+        address indexed user,
+        uint256 liquidity,
+        address tokenA,
+        address tokenB
+    );
+
     constructor(address router) {
         require(router != address(0), "SnapfyUniswapV2: Router address cannot be zero");
         uniswapRouter = IUniswapV2Router02(router);
@@ -33,6 +41,8 @@ contract SnapfyUniswapV2 {
 
         uint256 tokenForLiquidity = inputAmount - half;
         _addLiquidityETH(inputToken, tokenForLiquidity, ethReceived);
+
+        emit LiquidityProvided(msg.sender, inputToken, inputAmount);
     }
 
     function provideLiquidityETH(address token) external payable {
@@ -42,6 +52,8 @@ contract SnapfyUniswapV2 {
         uint256 tokenReceived = _swapETHForTokens(token, half);
 
         _addLiquidityETH(token, tokenReceived, msg.value - half);
+
+        emit LiquidityProvided(msg.sender, token, msg.value);
     }
 
     function withdraw(address tokenA, address tokenB, uint256 liquidity) external {
@@ -52,6 +64,8 @@ contract SnapfyUniswapV2 {
         IERC20(pair).approve(address(uniswapRouter), liquidity);
 
         uniswapRouter.removeLiquidity(tokenA, tokenB, liquidity, 0, 0, msg.sender, block.timestamp);
+
+        emit LiquidityWithdrawn(msg.sender, liquidity, tokenA, tokenB);
     }
 
     function _swapTokensForETH(
