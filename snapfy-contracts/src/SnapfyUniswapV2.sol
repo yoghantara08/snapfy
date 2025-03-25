@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.28;
 
 import "./interfaces/IUniswapV2Router02.sol";
 import "./interfaces/IERC20.sol";
@@ -7,180 +7,65 @@ import "./interfaces/IUniswapV2Factory.sol";
 import "./interfaces/IWETH.sol";
 
 contract SnapfyUniswapV2 {
-    IUniswapV2Router02 public immutable router;
+    IUniswapV2Router02 public immutable uniswapRouter;
+    IUniswapV2Factory public immutable uniswapFactory;
     address public immutable owner;
     address public immutable WETH;
 
-    event LiquidityProvided(
-        address indexed user,
-        address inputToken,
-        uint256 amount,
-        address tokenA,
-        address tokenB
-    );
-    event LiquidityWithdrawn(
-        address indexed user,
-        address tokenA,
-        address tokenB,
-        uint256 liquidity
-    );
+    error TransferFailed();
 
-    constructor(address _router) {
-        require(
-            _router != address(0),
-            "SnapfyUniswapV2: Router address cannot be zero"
-        );
-        router = IUniswapV2Router02(_router);
-        WETH = router.WETH();
+    constructor(address router) {
+        require(router != address(0), "SnapfyUniswapV2: Router address cannot be zero");
+        uniswapRouter = IUniswapV2Router02(router);
+        uniswapFactory = IUniswapV2Factory(uniswapRouter.factory());
+        WETH = uniswapRouter.WETH();
         owner = msg.sender;
     }
 
-    function provideLiquidity(
-        address inputToken,
-        uint256 amount,
-        address tokenA,
-        address tokenB,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        uint256 deadline
-    ) external payable {
-        require(amount > 0, "SnapfyUniswapV2: Amount must be greater than 0");
-        require(
-            tokenA != address(0) && tokenB != address(0),
-            "SnapfyUniswapV2: Invalid token address"
-        );
-
-        uint256 fee = amount / 100;
-        uint256 remaining = amount - fee;
-
-        if (inputToken != address(0)) {
-            require(
-                IERC20(inputToken).transferFrom(
-                    msg.sender,
-                    address(this),
-                    amount
-                ),
-                "SnapfyUniswapV2: Transfer failed"
-            );
-            IERC20(inputToken).approve(address(router), amount);
-            IERC20(inputToken).transfer(owner, fee);
-        } else {
-            require(
-                msg.value == amount,
-                "SnapfyUniswapV2: ETH amount mismatch"
-            );
-            payable(owner).transfer(fee);
-        }
-
-        address factory = router.factory();
-        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-        require(pair != address(0), "SnapfyUniswapV2: Pair does not exist");
-
-        uint256 halfAmount = remaining / 2;
-        swapTokens(inputToken, tokenA, halfAmount);
-        swapTokens(inputToken, tokenB, halfAmount);
-
-        addLiquidity(tokenA, tokenB, amountAMin, amountBMin, deadline);
-
-        emit LiquidityProvided(msg.sender, inputToken, amount, tokenA, tokenB);
-    }
-
-    function withdraw(
-        address tokenA,
-        address tokenB,
-        uint256 liquidity,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        uint256 deadline
-    ) external {
-        address factory = router.factory();
-        address pair = IUniswapV2Factory(factory).getPair(tokenA, tokenB);
-        require(pair != address(0), "SnapfyUniswapV2: Pair does not exist");
-
-        IERC20(pair).transferFrom(msg.sender, address(this), liquidity);
-        IERC20(pair).approve(address(router), liquidity);
-
-        router.removeLiquidity(
-            tokenA,
-            tokenB,
-            liquidity,
-            amountAMin,
-            amountBMin,
-            msg.sender,
-            deadline
-        );
-
-        emit LiquidityWithdrawn(msg.sender, tokenA, tokenB, liquidity);
-    }
-
-    function swapTokens(
-        address inputToken,
-        address outputToken,
-        uint256 amountIn
-    ) private {
-        if (inputToken == outputToken) return;
-
-        if (inputToken == address(0) && outputToken == WETH) {
-            IWETH(WETH).deposit{value: amountIn}();
-            return;
-        }
-
-        address[] memory path = new address[](2);
-        path[0] = inputToken == address(0) ? WETH : inputToken;
-        path[1] = outputToken;
-
-        if (inputToken == address(0)) {
-            router.swapExactETHForTokens{value: amountIn}(
-                0,
-                path,
-                address(this),
-                block.timestamp + 300
-            );
-        } else if (outputToken == address(0)) {
-            IERC20(inputToken).approve(address(router), amountIn);
-            router.swapExactTokensForETH(
-                amountIn,
-                0,
-                path,
-                address(this),
-                block.timestamp + 300
-            );
-        } else {
-            IERC20(inputToken).approve(address(router), amountIn);
-            router.swapExactTokensForTokens(
-                amountIn,
-                0,
-                path,
-                address(this),
-                block.timestamp + 300
-            );
-        }
-    }
-
-    function addLiquidity(
-        address tokenA,
-        address tokenB,
-        uint256 amountAMin,
-        uint256 amountBMin,
-        uint256 deadline
-    ) private {
-        uint256 amountA = IERC20(tokenA).balanceOf(address(this));
-        uint256 amountB = IERC20(tokenB).balanceOf(address(this));
-
-        IERC20(tokenA).approve(address(router), amountA);
-        IERC20(tokenB).approve(address(router), amountB);
-
-        router.addLiquidity(
-            tokenA,
-            tokenB,
-            amountA,
-            amountB,
-            amountAMin,
-            amountBMin,
-            msg.sender,
-            deadline
-        );
-    }
-
     receive() external payable {}
+
+    function provideLiquidity(address inputToken, uint256 inputAmount) external {
+        if (!IERC20(inputToken).transferFrom(msg.sender, address(this), inputAmount))
+            revert TransferFailed();
+
+        uint256 half = inputAmount / 2;
+        uint256 ethReceived = _swapTokensForETH(inputToken, half);
+
+        uint256 tokenForLiquidity = inputAmount - half;
+        _addLiquidityETH(inputToken, tokenForLiquidity, ethReceived);
+    }
+
+    function _swapTokensForETH(
+        address token,
+        uint256 amount
+    ) internal returns (uint256 amountReceived) {
+        address[] memory path = new address[](2);
+        path[0] = token;
+        path[1] = WETH;
+
+        if (!IERC20(token).approve(address(uniswapRouter), amount)) revert TransferFailed();
+
+        uint256[] memory amounts = uniswapRouter.swapExactTokensForETH(
+            amount,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+
+        amountReceived = amounts[1];
+    }
+
+    function _addLiquidityETH(address token, uint256 tokenAmount, uint256 ethAmount) internal {
+        if (!IERC20(token).approve(address(uniswapRouter), tokenAmount)) revert TransferFailed();
+
+        uniswapRouter.addLiquidityETH{value: ethAmount}(
+            token,
+            tokenAmount,
+            0,
+            0,
+            msg.sender,
+            block.timestamp
+        );
+    }
 }
