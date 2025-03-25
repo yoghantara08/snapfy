@@ -44,4 +44,36 @@ contract SnapfyUniswapV2Test is Test {
 
         assertGt(lpBalance, 0, "LP balance should increase");
     }
+
+    function testProvideLiquidityETH() public {
+        uint256 ethAmount = 0.05 ether;
+        vm.deal(user, 0.05 ether);
+
+        address pair = IUniswapV2Factory(snapfy.uniswapRouter().factory()).getPair(WETH, USDC);
+
+        vm.startPrank(user);
+        // Check Balance Before
+        uint256 ethBalanceBefore = user.balance;
+        uint256 lpBalanceBefore = IERC20(pair).balanceOf(user);
+        console.log("ETH balance before: ", ethBalanceBefore);
+        console.log("LP balance before: ", lpBalanceBefore);
+
+        snapfy.provideLiquidityETH{value: ethAmount}(USDC);
+
+        // Check balances after
+        uint256 ethBalanceAfter = user.balance;
+        uint256 usdcBalanceAfter = IERC20(USDC).balanceOf(address(snapfy));
+        uint256 lpBalanceAfter = IERC20(pair).balanceOf(user);
+
+        console.log("ETH balance after: ", ethBalanceAfter);
+        console.log("USDC balance after: ", usdcBalanceAfter);
+        console.log("LP balance after: ", lpBalanceAfter);
+        vm.stopPrank();
+
+        uint256 lpBalance = IERC20(pair).balanceOf(user);
+
+        assertGt(lpBalance, 0, "LP balance should increase");
+        assertGt(lpBalanceAfter, lpBalanceBefore, "LP balance should increase");
+        assertLt(ethBalanceAfter, ethBalanceBefore, "ETH balance should decrease");
+    }
 }

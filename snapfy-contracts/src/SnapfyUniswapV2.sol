@@ -35,6 +35,15 @@ contract SnapfyUniswapV2 {
         _addLiquidityETH(inputToken, tokenForLiquidity, ethReceived);
     }
 
+    function provideLiquidityETH(address token) external payable {
+        require(msg.value > 0, "SnapfyUniswapV2: ETH amount must be greater than zero");
+
+        uint256 half = msg.value / 2;
+        uint256 tokenReceived = _swapETHForTokens(token, half);
+
+        _addLiquidityETH(token, tokenReceived, msg.value - half);
+    }
+
     function _swapTokensForETH(
         address token,
         uint256 amount
@@ -47,6 +56,24 @@ contract SnapfyUniswapV2 {
 
         uint256[] memory amounts = uniswapRouter.swapExactTokensForETH(
             amount,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+
+        amountReceived = amounts[1];
+    }
+
+    function _swapETHForTokens(
+        address token,
+        uint256 ethAmount
+    ) internal returns (uint256 amountReceived) {
+        address[] memory path = new address[](2);
+        path[0] = WETH;
+        path[1] = token;
+
+        uint256[] memory amounts = uniswapRouter.swapExactETHForTokens{value: ethAmount}(
             0,
             path,
             address(this),
