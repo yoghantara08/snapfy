@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 
 import Networth from "@/features/dashboard/components/Networth/Networth";
-import PoolList from "@/features/dashboard/components/PoolList/PoolList";
 import PoolsHeadline from "@/features/dashboard/components/PoolsHeadline/PoolsHeadline";
 import PoolsMenuFilter from "@/features/dashboard/components/PoolsMenuFilter/PoolsMenuFilter";
+import Positions from "@/features/dashboard/components/Positions/Positions";
 import EmptyPool from "@/features/pools/components/EmptyPool/EmptyPool";
 
 const DashboardPage = () => {
@@ -20,7 +20,7 @@ const DashboardPage = () => {
         <section className="space-y-4 md:space-y-6">
           <PoolsMenuFilter />
           {pools?.length > 0 ? (
-            <PoolList />
+            <Positions />
           ) : (
             <EmptyPool
               title="No Liquidity Positions Found"
