@@ -16,6 +16,7 @@ interface ReviewPositionModalProps {
     address: `0x${string}` | undefined;
   };
   amount: number;
+  handleAddLiquidity: () => Promise<void>;
 }
 
 const ReviewPositionModal = ({
@@ -24,6 +25,7 @@ const ReviewPositionModal = ({
   pool,
   amount,
   selectedToken,
+  handleAddLiquidity,
 }: ReviewPositionModalProps) => {
   const token0symbol =
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
@@ -104,8 +106,12 @@ const ReviewPositionModal = ({
           <div>$0</div>
         </div>
 
-        <Button className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 mb-2 w-full">
-          Approve
+        <Button
+          onClick={handleAddLiquidity}
+          variant="blue"
+          className="mb-2 w-full"
+        >
+          Add Liquidity
         </Button>
       </div>
     </Modal>

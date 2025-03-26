@@ -7,12 +7,25 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { ChevronDownIcon } from "lucide-react";
-import { useAccount, useBalance } from "wagmi";
+import { Address, erc20Abi } from "viem";
+import { waitForTransactionReceipt } from "viem/actions";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useWalletClient,
+  useWriteContract,
+} from "wagmi";
 
 import Button from "@/components/Button/Button";
 import NumberInput from "@/components/Input/NumberInput";
+import { SNAPFY_CONTRACT_ADDRESS } from "@/constant";
 import useNumberInput from "@/hooks/useNumberInput";
 import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
+import {
+  swapETHAndProvideLiquidity,
+  swapTokenAndProvideLiquidity,
+} from "@/lib/services/snapfyUniswapV2Service";
 
 import ReviewPositionModal from "./ReviewPositionModal";
 
@@ -36,13 +49,18 @@ const tokenOptions = [
 
 const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
   const { data: pool } = useUniswapV2GetPoolById(poolId);
+  const { data: walletClient } = useWalletClient();
+  const { address } = useAccount();
+  const { writeContractAsync } = useWriteContract();
 
   const { displayValue, value, handleInputBlur, handleInputChange } =
     useNumberInput();
+
   const [selectedToken, setSelectedToken] = useState(tokenOptions[0]);
   const [reviewModal, setReviewModal] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
 
-  const { address } = useAccount();
   const { data: tokenBalance } = useBalance({
     address,
     token: selectedToken.address as `0x${string}`,
@@ -50,6 +68,13 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
 
   const { data: ethBalance } = useBalance({
     address,
+  });
+
+  const { data: allowance } = useReadContract({
+    abi: erc20Abi,
+    address: poolId as Address,
+    functionName: "allowance",
+    args: [address!, SNAPFY_CONTRACT_ADDRESS],
   });
 
   const balance = selectedToken.symbol === "ETH" ? ethBalance : tokenBalance;
@@ -61,6 +86,76 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
   const token1symbol =
     pool.token1.symbol === "WETH" ? "ETH" : pool.token1.symbol;
+
+  // ETH
+  const handleSwapETHAndAddLiquidity = async () => {
+    if (!walletClient || !address) return;
+
+    try {
+      const tx = await swapETHAndProvideLiquidity(
+        pool.token1.id as Address,
+        BigInt(
+          BigNumber(value)
+            .times(10 ** 18)
+            .toFixed(0),
+        ),
+        walletClient,
+        address,
+      );
+
+      console.log(tx);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // TOKEN
+  const handleSwapTokenAndAddLiquidity = async () => {
+    if (!walletClient || !address) return;
+
+    try {
+      const currentAllowance = allowance ?? BigInt(0);
+      const inputAmount = BigInt(
+        BigNumber(value)
+          .times(10 ** pool.token1.decimals)
+          .toFixed(0),
+      );
+      const inputToken = pool.token1.id as Address;
+
+      if (currentAllowance < inputAmount) {
+        setIsApproving(true);
+        const approveTx = await writeContractAsync({
+          abi: erc20Abi,
+          address: inputToken,
+          functionName: "approve",
+          args: [SNAPFY_CONTRACT_ADDRESS, inputAmount],
+        });
+
+        await waitForTransactionReceipt(walletClient, {
+          hash: approveTx,
+        });
+        setIsApproving(false);
+      }
+
+      setIsAddingLiquidity(true);
+      const tx = await swapTokenAndProvideLiquidity(
+        inputToken,
+        inputAmount,
+        walletClient,
+        address,
+      );
+
+      await waitForTransactionReceipt(walletClient, {
+        hash: tx as `0x${string}`,
+      });
+      console.log(tx);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsApproving(false);
+      setIsAddingLiquidity(false);
+    }
+  };
 
   return (
     <div className="shadow-accent-blue/20 w-full space-y-3 rounded-sm border p-5 shadow">
@@ -212,6 +307,11 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
         pool={pool}
         selectedToken={selectedToken}
         amount={value}
+        handleAddLiquidity={
+          selectedToken.symbol === "ETH"
+            ? handleSwapETHAndAddLiquidity
+            : handleSwapTokenAndAddLiquidity
+        }
       />
     </div>
   );
