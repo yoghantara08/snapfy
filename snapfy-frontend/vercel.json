@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/*": {
+      "externalDependencies": [
+        "sharp"
+      ]
+    }
+  }
+}
