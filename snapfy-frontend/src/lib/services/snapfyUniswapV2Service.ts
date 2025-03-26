@@ -159,6 +159,10 @@ export const getUserLiquidityPosition = async (
     const reserve0 = new BigNumber(reserves[0].toString());
     const reserve1 = new BigNumber(reserves[1].toString());
 
+    if (balance.isZero()) {
+      return null;
+    }
+
     // User percentage share of the pool
     const userShare = balance.div(totalSupply).times(100);
 
