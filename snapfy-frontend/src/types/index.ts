@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export interface IUniswapV3Pool {
   id: string;
   token0: {
@@ -58,3 +60,13 @@ export interface IUniswapV2Pool {
   dailyVolumeUSD: number;
   dailyFeesUSD: number;
 }
+
+export type LiquidityPositionType = {
+  balance: BigNumber;
+  totalSupply: BigNumber;
+  reserve0: BigNumber;
+  reserve1: BigNumber;
+  userShare: BigNumber;
+  userToken0: BigNumber;
+  userToken1: BigNumber;
+} | null;

@@ -1,9 +1,12 @@
+import BigNumber from "bignumber.js";
 import { parseAbiItem, WalletClient } from "viem";
 import { Address, createPublicClient, http } from "viem";
 import { base } from "viem/chains";
 
 import { SNAPFY_CONTRACT_ADDRESS } from "@/constant";
 import SNAPFY_ABI from "@/lib/abi/SnapfyUniswapV2ABI.json";
+import UNISWAP_V2_PAIR_ABI from "@/lib/abi/UniswapV2PairABI.json";
+import { LiquidityPositionType } from "@/types";
 
 export const publicClient = createPublicClient({
   chain: base,
@@ -122,5 +125,58 @@ export const getLiquidityWithdrawnEvents = async () => {
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const getUserLiquidityPosition = async (
+  userAddress: Address,
+  pairAddress: Address,
+): Promise<LiquidityPositionType> => {
+  try {
+    const [balanceRaw, totalSupplyRaw, reserves] = await Promise.all([
+      publicClient.readContract({
+        address: pairAddress,
+        abi: UNISWAP_V2_PAIR_ABI,
+        functionName: "balanceOf",
+        args: [userAddress],
+      }) as Promise<bigint>,
+
+      publicClient.readContract({
+        address: pairAddress,
+        abi: UNISWAP_V2_PAIR_ABI,
+        functionName: "totalSupply",
+      }) as Promise<bigint>,
+
+      publicClient.readContract({
+        address: pairAddress,
+        abi: UNISWAP_V2_PAIR_ABI,
+        functionName: "getReserves",
+      }) as Promise<[bigint, bigint, number]>,
+    ]);
+
+    const balance = new BigNumber(balanceRaw.toString());
+    const totalSupply = new BigNumber(totalSupplyRaw.toString());
+    const reserve0 = new BigNumber(reserves[0].toString());
+    const reserve1 = new BigNumber(reserves[1].toString());
+
+    // User percentage share of the pool
+    const userShare = balance.div(totalSupply).times(100);
+
+    // User share of each token
+    const userToken0 = userShare.times(reserve0).div(100);
+    const userToken1 = userShare.times(reserve1).div(100);
+
+    return {
+      balance,
+      totalSupply,
+      reserve0,
+      reserve1,
+      userShare,
+      userToken0,
+      userToken1,
+    };
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
