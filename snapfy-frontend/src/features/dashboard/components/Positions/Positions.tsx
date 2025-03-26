@@ -15,7 +15,6 @@ import useLiquidityPosition from "@/hooks/useLiquidityPosition";
 import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
 import { calculateAPRV2 } from "@/lib/utils/calculateAPR";
 
-import EtherIcon from "../../../../../public/Image/etherIcon.svg";
 import UsdcIcon from "../../../../../public/Image/usdcIcon.svg";
 
 import RemoveLiquidityModal from "./RemoveLiquidityModal";
@@ -66,7 +65,7 @@ const Positions = () => {
               <div className="flex w-fit items-center justify-center gap-3">
                 <div className="flex">
                   <Image
-                    src={EtherIcon}
+                    src={"/tokens/weth.svg"}
                     alt="EtherIcon"
                     width={50}
                     height={50}
@@ -81,7 +80,7 @@ const Positions = () => {
                   />
                 </div>
                 <div className="flex flex-col items-start justify-center gap-1">
-                  <h3 className="text-xl font-medium">ETH/USDC</h3>
+                  <h3 className="text-xl font-medium">WETH/USDC</h3>
                   <div className="flex items-center gap-2">
                     <div className="bg-opacity-blue text-accent-blue rounded-sm px-2 py-[2px]">
                       v2
@@ -107,7 +106,7 @@ const Positions = () => {
                 <p>{loaded ? shareOfPool : 0}%</p>
               </div>
               <div className="flex w-full items-center justify-between gap-5">
-                <p>Deposited ETH</p>
+                <p>Deposited WETH</p>
                 <p>{loaded ? token0share : 0}</p>
               </div>
               <div className="flex w-full items-center justify-between gap-5">
@@ -132,7 +131,16 @@ const Positions = () => {
         />
       )}
 
-      <RemoveLiquidityModal open={open} handleClose={() => setOpen(false)} />
+      <RemoveLiquidityModal
+        open={open}
+        handleClose={() => setOpen(false)}
+        lpAddress={pairAddress}
+        lpBalance={BigInt(position?.balance.toNumber() || 0)}
+        tokenA={pairData?.token0.id as Address}
+        tokenB={pairData?.token1.id as Address}
+        tokenAshare={token0share}
+        tokenBshare={token1share}
+      />
     </>
   );
 };

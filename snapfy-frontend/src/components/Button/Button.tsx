@@ -9,7 +9,7 @@ export interface ButtonProps {
   disabled?: boolean;
   // eslint-disable-next-line no-unused-vars
   onClick?: (() => void) | ((e: any) => void);
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "blue";
   type?: "button" | "submit" | "reset";
 }
 
@@ -37,6 +37,12 @@ const Button = ({
             variant === "primary" && !disabled,
           "bg-accent-pink/20 cursor-not-allowed text-white":
             variant === "primary" && disabled,
+
+          // Blue variant
+          "bg-accent-blue/90 hover:bg-accent-blue cursor-pointer text-white":
+            variant === "blue" && !disabled,
+          "bg-accent-blue/40 !cursor-not-allowed text-white":
+            variant === "blue" && disabled,
 
           // Secondary variant
           "bg-background hover:bg-surface hover:!border-surface cursor-pointer border":
