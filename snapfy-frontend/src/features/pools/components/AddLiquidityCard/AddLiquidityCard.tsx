@@ -312,6 +312,7 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
             ? handleSwapETHAndAddLiquidity
             : handleSwapTokenAndAddLiquidity
         }
+        disableBtn={isApproving || isAddingLiquidity}
       />
     </div>
   );

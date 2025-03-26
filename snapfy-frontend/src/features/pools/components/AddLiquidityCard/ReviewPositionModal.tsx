@@ -17,6 +17,7 @@ interface ReviewPositionModalProps {
   };
   amount: number;
   handleAddLiquidity: () => Promise<void>;
+  disableBtn: boolean;
 }
 
 const ReviewPositionModal = ({
@@ -26,6 +27,7 @@ const ReviewPositionModal = ({
   amount,
   selectedToken,
   handleAddLiquidity,
+  disableBtn,
 }: ReviewPositionModalProps) => {
   const token0symbol =
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
@@ -107,6 +109,7 @@ const ReviewPositionModal = ({
         </div>
 
         <Button
+          disabled={disableBtn}
           onClick={handleAddLiquidity}
           variant="blue"
           className="mb-2 w-full"
