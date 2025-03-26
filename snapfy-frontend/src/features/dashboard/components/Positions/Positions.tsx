@@ -63,7 +63,7 @@ const Positions = () => {
               <div className="flex w-fit items-center justify-center gap-3">
                 <div className="flex">
                   <Image
-                    src={"/tokens/weth.svg"}
+                    src={"/tokens/WETH.svg"}
                     alt="EtherIcon"
                     width={50}
                     height={50}

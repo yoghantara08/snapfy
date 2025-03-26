@@ -142,7 +142,7 @@ const RemoveLiquidityModal = ({
         <div className="flex items-center justify-start gap-2">
           <div className="flex items-center justify-center">
             <Image
-              src={"/tokens/weth.svg"}
+              src={"/tokens/WETH.svg"}
               width={64}
               height={64}
               alt="icon"
@@ -195,7 +195,7 @@ const RemoveLiquidityModal = ({
             <p>WETH position</p>
             <div className="flex items-center justify-center gap-2">
               <Image
-                src={"/tokens/weth.svg"}
+                src={"/tokens/WETH.svg"}
                 alt="etherIcon"
                 width={64}
                 height={64}

@@ -52,21 +52,21 @@ const HowItWork = () => {
     <section className="relative flex w-full flex-col items-center justify-center px-3 pt-[50px] pb-[60px]">
       <div className="mb-10 flex flex-wrap items-center justify-center gap-10 md:gap-24">
         <Image
-          src={"/Image/baseLogo.png"}
+          src={"/Image/baseLogo.svg"}
           width={200}
           height={200}
           alt="BaseLogo"
           className="w-28 md:w-32"
         />
         <Image
-          src={"/Image/UniswapLogo.png"}
+          src={"/Image/uniswapLogo.svg"}
           width={200}
           height={200}
           alt="UniswapLogo"
           className="w-38 md:w-42"
         />
         <Image
-          src={"/Image/PbaLogo.png"}
+          src={"/Image/pbaLogo.svg"}
           width={200}
           height={200}
           alt="PbaLogo"

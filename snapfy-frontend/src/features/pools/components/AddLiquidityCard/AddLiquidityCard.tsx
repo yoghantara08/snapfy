@@ -37,7 +37,7 @@ const quickButtons = [25, 50, 75, 100];
 const tokenOptions = [
   {
     symbol: "ETH",
-    image: "/tokens/eth.svg",
+    image: "/tokens/ETH.svg",
     address: undefined,
   },
   {
