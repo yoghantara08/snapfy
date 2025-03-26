@@ -19,8 +19,6 @@ import { SNAPFY_CONTRACT_ADDRESS } from "@/constant";
 import useNumberInput from "@/hooks/useNumberInput";
 import { withdrawLiquidity } from "@/lib/services/snapfyUniswapV2Service";
 
-import UsdcIcon from "../../../../../public/Image/usdcIcon.svg";
-
 const style = {
   position: "absolute",
   top: "50%",
@@ -151,7 +149,7 @@ const RemoveLiquidityModal = ({
               className="w-[50px]"
             />
             <Image
-              src={UsdcIcon}
+              src={"/Image/usdcIcon.svg"}
               alt="icon"
               className="w-[50px] translate-x-[-10px]"
             />
@@ -209,7 +207,11 @@ const RemoveLiquidityModal = ({
           <div className="flex w-full items-center justify-between gap-5">
             <p>USDC position</p>
             <div className="flex items-center justify-center gap-2">
-              <Image src={UsdcIcon} alt="usdcicon" className="w-[25px]"></Image>
+              <Image
+                src={"/Image/usdcIcon.svg"}
+                alt="usdcicon"
+                className="w-[25px]"
+              ></Image>
               <p>{tokenBshare} USDC</p>
             </div>
           </div>

@@ -15,8 +15,6 @@ import useLiquidityPosition from "@/hooks/useLiquidityPosition";
 import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
 import { calculateAPRV2 } from "@/lib/utils/calculateAPR";
 
-import UsdcIcon from "../../../../../public/Image/usdcIcon.svg";
-
 import RemoveLiquidityModal from "./RemoveLiquidityModal";
 
 const pairAddress = UNISWAP_V2_POOL_IDS.ETH_USDC as Address;
@@ -72,7 +70,7 @@ const Positions = () => {
                     className="size-14 rounded-full"
                   />
                   <Image
-                    src={UsdcIcon}
+                    src={"/Image/usdcIcon.svg"}
                     alt="usdcIcon"
                     width={50}
                     height={50}

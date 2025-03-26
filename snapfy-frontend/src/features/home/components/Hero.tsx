@@ -8,13 +8,6 @@ import { MoveRightIcon } from "lucide-react";
 
 import Button from "@/components/Button/Button";
 
-import Btc from "../../../../public/Image/btc.svg";
-import Dao from "../../../../public/Image/dao.svg";
-import Ether from "../../../../public/Image/ether.svg";
-import Uniswap from "../../../../public/Image/uniswap.svg";
-import Usdc from "../../../../public/Image/usdc.svg";
-import Usdt from "../../../../public/Image/usdt.svg";
-
 const HomeHero = () => {
   return (
     <section className="bg-surface/40 flex min-h-[370px] w-full justify-center border-b px-3 sm:min-h-[400px] md:min-h-[500px]">
@@ -26,17 +19,23 @@ const HomeHero = () => {
           )}
         >
           <Image
-            src={Usdc}
+            width={64}
+            height={64}
+            src={"/Image/usdc.svg"}
             alt="usdc"
             className="size-11 sm:size-14 lg:size-16"
           />
           <Image
-            src={Usdt}
+            width={64}
+            height={64}
+            src={"/Image/usdt.svg"}
             alt="usdt"
             className="ml-[100px] size-11 opacity-0 sm:size-14 lg:size-16 lg:opacity-100"
           />
           <Image
-            src={Dao}
+            width={64}
+            height={64}
+            src={"/Image/dao.svg"}
             alt="dai"
             className="size-11 sm:size-14 lg:size-16"
           />
@@ -67,18 +66,24 @@ const HomeHero = () => {
           )}
         >
           <Image
-            src={Ether}
+            width={64}
+            height={64}
+            src={"/Image/ether.svg"}
             alt="eth"
             className="size-11 sm:size-14 lg:size-16"
           />
           <Image
-            src={Uniswap}
+            width={64}
+            height={64}
+            src={"/Image/uniswap.svg"}
             alt="uni"
             className="-ml-[100px] size-11 opacity-0 sm:size-14 lg:size-16 lg:opacity-100"
           />
           <Image
-            src={Btc}
+            src={"/Image/btc.svg"}
             alt="btc"
+            width={64}
+            height={64}
             className="size-11 sm:size-14 lg:size-16"
           />
         </div>
@@ -88,37 +93,3 @@ const HomeHero = () => {
 };
 
 export default HomeHero;
-
-{
-  /* <Image
-        src={Usdc}
-        className="absolute top-[30px] left-[50px] hidden md:block lg:left-[90px]"
-        alt="usdt"
-      />
-      <Image
-        src={Usdt}
-        className="absolute top-1/2 left-[100px] hidden translate-y-[-50%] md:block lg:left-[200px]"
-        alt="usdt"
-      />
-      <Image
-        src={Dao}
-        className="absolute bottom-[30px] left-[50px] hidden md:block lg:left-[90px]"
-        alt="usdt"
-      />
-
-      <Image
-        src={Ether}
-        className="absolute top-[30px] right-[50px] hidden md:block lg:right-[90px]"
-        alt="usdt"
-      />
-      <Image
-        src={Uniswap}
-        className="absolute top-1/2 right-[100px] hidden translate-y-[-50%] md:block lg:right-[200px]"
-        alt="usdt"
-      />
-      <Image
-        src={Btc}
-        className="absolute right-[50px] bottom-[30px] hidden md:block lg:right-[90px]"
-        alt="usdt"
-      /> */
-}
