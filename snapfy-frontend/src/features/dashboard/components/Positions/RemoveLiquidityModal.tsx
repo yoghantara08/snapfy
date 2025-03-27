@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
 
 import Image from "next/image";
@@ -86,58 +87,88 @@ const RemoveLiquidityModal = ({
       // Approve the contract to spend LP tokens
       if (currentAllowance < withdrawAmount) {
         setIsApproving(true);
-        const approveTx = await writeContractAsync({
-          abi: erc20Abi,
-          address: lpAddress,
-          functionName: "approve",
-          args: [SNAPFY_CONTRACT_ADDRESS, withdrawAmount],
-        });
+        const approvingToast = toast.loading("Approving transaction...");
 
-        await waitForTransactionReceipt(walletClient, {
-          hash: approveTx,
-        });
-        setIsApproving(false);
+        try {
+          const approveTx = await writeContractAsync({
+            abi: erc20Abi,
+            address: lpAddress,
+            functionName: "approve",
+            args: [SNAPFY_CONTRACT_ADDRESS, withdrawAmount],
+          });
+
+          await waitForTransactionReceipt(walletClient, {
+            hash: approveTx,
+          });
+
+          toast.success("Approval successful!");
+        } catch (error) {
+          toast.error("Approval failed or canceled.");
+          throw error;
+        } finally {
+          setIsApproving(false);
+          toast.dismiss(approvingToast);
+        }
       }
 
       setIsWithdrawing(true);
-      const withdrawTx = await withdrawLiquidity(
-        tokenA as Address,
-        tokenB as Address,
-        withdrawAmount,
-        walletClient,
-        address,
-      );
+      const withdrawingToast = toast.loading("Withdrawing liquidity...");
 
-      await waitForTransactionReceipt(walletClient, {
-        hash: withdrawTx as `0x${string}`,
-      });
+      try {
+        const withdrawTx = await withdrawLiquidity(
+          tokenA as Address,
+          tokenB as Address,
+          withdrawAmount,
+          walletClient,
+          address,
+        );
 
-      handleClose();
+        await waitForTransactionReceipt(walletClient, {
+          hash: withdrawTx as `0x${string}`,
+        });
+
+        toast.success("Withdrawal successful!");
+        handleClose();
+      } catch (error) {
+        toast.error("Withdrawal failed or canceled.");
+        throw error;
+      } finally {
+        setIsWithdrawing(false);
+        toast.dismiss(withdrawingToast);
+      }
     } catch (error) {
-      setIsApproving(false);
-      setIsWithdrawing(false);
-      console.log(error);
+      console.error(error);
     } finally {
       setIsApproving(false);
       setIsWithdrawing(false);
     }
   };
 
+  const onClose =
+    isApproving || isWithdrawing
+      ? undefined
+      : () => {
+          handleClose();
+          handleInputChange("0");
+        };
+
   return (
     <Modal
       open={open}
-      onClose={isApproving || isWithdrawing ? undefined : handleClose}
+      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
         <div
-          className="grid content-center items-center justify-center justify-items-center"
+          className="my-1 grid content-center items-center justify-center justify-items-center"
           style={{ gridTemplateColumns: "30px 1fr 30px" }}
         >
-          <IoClose className="cursor-pointer text-2xl" onClick={handleClose} />
-          <p className="text-lg">Remove Liquidity</p>
-          <div></div>
+          <IoClose
+            className="text-secondary cursor-pointer text-3xl"
+            onClick={onClose}
+          />
+          <p className="text-xl font-medium">Remove Liquidity</p>
         </div>
         <div className="flex items-center justify-start gap-2">
           <div className="flex items-center justify-center">
