@@ -15,7 +15,8 @@ const worksans = Work_Sans({
 
 export const metadata: Metadata = {
   title: "Snapfy",
-  description: "Snapfy",
+  description:
+    "DeFi app that lets you swap and provide liquidity on Uniswap in one click, no manual balancing, or swaps needed. ",
 };
 
 export default function RootLayout({
