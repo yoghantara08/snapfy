@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 import { useUniswapV2Pools } from "@/hooks/useUniswapV2Pools";
 import useUniswapV3Pools from "@/hooks/useUniswapV3Pools";
+import { IUniswapV2Pool, IUniswapV3Pool } from "@/types";
 
 import EmptyPool from "../EmptyPool/EmptyPool";
 import PoolsMenuFilter from "../PoolsMenuFilter/PoolsMenuFilter";
@@ -27,6 +28,24 @@ const Pools = () => {
     return <>Error</>;
   }
 
+  const filteredPoolsV2 =
+    selectedMenu === "All Pools" || selectedMenu === "V2" ? poolsV2 || [] : [];
+  const filteredPoolsV3 =
+    selectedMenu === "All Pools" || selectedMenu === "V3" ? poolsV3 || [] : [];
+
+  const searchFilter = (pool: IUniswapV2Pool | IUniswapV3Pool) => {
+    const query = search.toLowerCase();
+    return (
+      pool.id.toLowerCase().includes(query) ||
+      pool.token0.symbol.toLowerCase().includes(query) ||
+      pool.token0.name.toLowerCase().includes(query) ||
+      pool.token1.symbol.toLowerCase().includes(query) ||
+      pool.token1.name.toLowerCase().includes(query)
+    );
+  };
+
+  const hasPools = filteredPoolsV2.length > 0 || filteredPoolsV3.length > 0;
+
   return (
     <section className="space-y-4 md:space-y-6">
       <PoolsMenuFilter
@@ -36,12 +55,12 @@ const Pools = () => {
         selectedMenu={selectedMenu}
         setSelectedMenu={setSelectedMenu}
       />
-      {poolsV3 && poolsV3.length > 0 ? (
+      {hasPools ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {poolsV2.map((pool) => (
+          {filteredPoolsV2.filter(searchFilter).map((pool) => (
             <PoolCardV2 key={pool.id} poolData={pool} poolVersion="v2" />
           ))}
-          {poolsV3.map((pool) => (
+          {filteredPoolsV3.filter(searchFilter).map((pool) => (
             <PoolCardV3 key={pool.id} poolData={pool} poolVersion="v3" />
           ))}
         </div>
