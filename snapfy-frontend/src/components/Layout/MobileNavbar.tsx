@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -22,8 +23,14 @@ const MobileNavbar = () => {
 
   return (
     <nav className="bg-background sticky top-0 z-20 flex h-[74px] w-full items-center justify-between border-b px-4">
-      <Link className="text-accent-pink text-2xl font-bold" href={"/"}>
-        Snapfy
+      <Link href={"/"}>
+        <Image
+          src={"/snapfy-logo.svg"}
+          alt="snapfy"
+          width={200}
+          height={150}
+          className="h-10 w-fit"
+        />
       </Link>
 
       <div className="flex items-center gap-3 text-sm">
@@ -42,12 +49,14 @@ const MobileNavbar = () => {
         size="full"
       >
         <div className="flex items-center justify-between">
-          <Link
-            href={"/"}
-            onClick={() => setOpen(false)}
-            className="text-accent-pink text-3xl font-bold"
-          >
-            Snapfy
+          <Link href={"/"} onClick={() => setOpen(false)}>
+            <Image
+              src={"/snapfy-logo.svg"}
+              alt="snapfy"
+              width={200}
+              height={150}
+              className="h-12 w-fit"
+            />
           </Link>
           <XIcon
             className="text-secondary size-8 cursor-pointer"

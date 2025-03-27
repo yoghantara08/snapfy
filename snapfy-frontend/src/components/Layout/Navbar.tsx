@@ -1,5 +1,6 @@
 import React from "react";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,8 +26,14 @@ const Navbar = () => {
     <nav className="bg-background sticky top-0 z-20 flex h-[80px] w-full justify-center border-b px-[30px]">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-7">
-          <Link href={"/"} className="text-accent-pink/80 text-3xl font-bold">
-            Snapfy
+          <Link href={"/"}>
+            <Image
+              src={"/snapfy-logo.svg"}
+              alt="snapfy"
+              width={200}
+              height={150}
+              className="h-10 w-fit"
+            />
           </Link>
 
           <ul className="flex items-center gap-5 pt-1">
@@ -35,9 +42,9 @@ const Navbar = () => {
                 <Link
                   href={menu.link}
                   className={classNames(
-                    "hover:text-primary text-lg hover:font-semibold",
+                    "hover:text-accent-pink/80 text-lg hover:font-semibold",
                     pathname.includes(menu.link)
-                      ? "font-semibold"
+                      ? "text-accent-pink/80 font-semibold"
                       : "text-muted font-medium",
                   )}
                 >
