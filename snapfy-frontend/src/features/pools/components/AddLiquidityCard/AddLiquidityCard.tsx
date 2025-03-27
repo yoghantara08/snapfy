@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 import Image from "next/image";
 
@@ -122,7 +123,11 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
   const handleSwapETHAndAddLiquidity = async () => {
     if (!walletClient || !address) return;
 
+    const loadingToast = toast.loading("Swapping ETH and adding liquidity...");
+
     try {
+      setIsAddingLiquidity(true);
+
       const tx = await swapETHAndProvideLiquidity(
         pool.token1.id as Address,
         BigInt(
@@ -134,9 +139,20 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
         address,
       );
 
+      await waitForTransactionReceipt(walletClient, {
+        hash: tx,
+      });
+
+      toast.success("ETH swap and liquidity addition successful!");
+      setReviewModal(false);
+      handleInputChange("0");
       console.log(tx);
     } catch (error) {
-      console.log(error);
+      toast.error("ETH swap and liquidity addition failed!");
+      console.error(error);
+    } finally {
+      setIsAddingLiquidity(false);
+      toast.dismiss(loadingToast);
     }
   };
 
@@ -153,33 +169,61 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
       );
       const inputToken = pool.token1.id as Address;
 
+      // APPROVE THE CONTRACT TO SPEND TOKEN
       if (currentAllowance < inputAmount) {
         setIsApproving(true);
-        const approveTx = await writeContractAsync({
-          abi: erc20Abi,
-          address: inputToken,
-          functionName: "approve",
-          args: [SNAPFY_CONTRACT_ADDRESS, inputAmount],
-        });
+        const approvingToast = toast.loading("Approving token...");
 
-        await waitForTransactionReceipt(walletClient, {
-          hash: approveTx,
-        });
-        setIsApproving(false);
+        try {
+          const approveTx = await writeContractAsync({
+            abi: erc20Abi,
+            address: inputToken,
+            functionName: "approve",
+            args: [SNAPFY_CONTRACT_ADDRESS, inputAmount],
+          });
+
+          await waitForTransactionReceipt(walletClient, {
+            hash: approveTx,
+          });
+
+          toast.success("Approval successful!");
+        } catch (error) {
+          toast.error("Approval failed or canceled.");
+          throw error;
+        } finally {
+          setIsApproving(false);
+          toast.dismiss(approvingToast);
+        }
       }
 
+      // SWAP AND ADD LIQUIDITY
       setIsAddingLiquidity(true);
-      const tx = await swapTokenAndProvideLiquidity(
-        inputToken,
-        inputAmount,
-        walletClient,
-        address,
+      const swappingToast = toast.loading(
+        "Swapping token and adding liquidity...",
       );
 
-      await waitForTransactionReceipt(walletClient, {
-        hash: tx as `0x${string}`,
-      });
-      console.log(tx);
+      try {
+        const tx = await swapTokenAndProvideLiquidity(
+          inputToken,
+          inputAmount,
+          walletClient,
+          address,
+        );
+
+        await waitForTransactionReceipt(walletClient, {
+          hash: tx as `0x${string}`,
+        });
+
+        toast.success("Token swap and liquidity addition successful!");
+        handleInputChange("0");
+        console.log(tx);
+      } catch (error) {
+        toast.error("Token swap and liquidity addition failed!");
+        throw error;
+      } finally {
+        setIsAddingLiquidity(false);
+        toast.dismiss(swappingToast);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -350,7 +394,7 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
 
       <ReviewPositionModal
         isOpen={reviewModal}
-        onClose={() => setReviewModal(false)}
+        onClose={() => (isApproving ? undefined : setReviewModal(false))}
         pool={pool}
         selectedToken={selectedToken}
         amount={value}

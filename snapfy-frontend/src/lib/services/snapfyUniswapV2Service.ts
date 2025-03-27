@@ -34,7 +34,7 @@ export const swapTokenAndProvideLiquidity = async (
     return tx;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -59,7 +59,7 @@ export const swapETHAndProvideLiquidity = async (
     return tx;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -84,7 +84,7 @@ export const withdrawLiquidity = async (
     return tx;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
