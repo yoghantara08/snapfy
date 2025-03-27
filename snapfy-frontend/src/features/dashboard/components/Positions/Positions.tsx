@@ -11,6 +11,7 @@ import { useAccount } from "wagmi";
 import Button from "@/components/Button/Button";
 import { UNISWAP_V2_POOL_IDS } from "@/constant";
 import EmptyPool from "@/features/pools/components/EmptyPool/EmptyPool";
+import PoolsLoader from "@/features/pools/components/Pools/PoolsLoader";
 import useLiquidityPosition from "@/hooks/useLiquidityPosition";
 import { useUniswapV2GetPoolById } from "@/hooks/useUniswapV2Pools";
 import { calculateAPRV2 } from "@/lib/utils/calculateAPR";
@@ -23,10 +24,10 @@ const Positions = () => {
   const { address } = useAccount();
   const {
     data: position,
-    isLoading,
+    isLoading: positionLoading,
     refetch,
   } = useLiquidityPosition(address as Address, pairAddress);
-  const { data: pairData, isLoading: loading } =
+  const { data: pairData, isLoading: poolLoading } =
     useUniswapV2GetPoolById(pairAddress);
 
   const [open, setOpen] = useState(false);
@@ -53,11 +54,12 @@ const Positions = () => {
     parseFloat(pairData?.reserveUSD || "0"),
   );
 
-  const loaded = !isLoading && !loading;
+  const isLoading = positionLoading || poolLoading;
 
   return (
     <>
-      {address && position !== null ? (
+      {isLoading && <PoolsLoader loaderCount={3} />}
+      {!isLoading && address && position?.userToken0 && position.userToken1 ? (
         <div className="grid w-full md:grid-cols-2">
           <div className="shadow-opacity-blue flex w-full flex-col items-center justify-center gap-5 rounded-sm border p-5 shadow">
             <div className="sx:flex-row sx:gap-8 flex flex-col items-center justify-between gap-4">
@@ -92,25 +94,25 @@ const Positions = () => {
               </div>
 
               <p className="bg-opacity-green text-accent-green rounded-sm px-2 py-1">
-                {loaded ? APR : 0}% APR
+                {!isLoading ? APR : 0}% APR
               </p>
             </div>
             <div className="bg-opacity-blue flex w-full flex-col items-center justify-center gap-2 rounded-sm p-3">
               <div className="flex w-full items-center justify-between gap-5">
                 <p>Current Position</p>
-                <p>${loaded ? currentUSDPosition : 0}</p>
+                <p>${!isLoading ? currentUSDPosition : 0}</p>
               </div>
               <div className="flex w-full items-center justify-between gap-5">
                 <p>Share of pool</p>
-                <p>{loaded ? shareOfPool : 0}%</p>
+                <p>{!isLoading ? shareOfPool : 0}%</p>
               </div>
               <div className="flex w-full items-center justify-between gap-5">
                 <p>Deposited WETH</p>
-                <p>{loaded ? token0share : 0}</p>
+                <p>{!isLoading ? token0share : 0}</p>
               </div>
               <div className="flex w-full items-center justify-between gap-5">
                 <p>Deposited USDC</p>
-                <p>{loaded ? token1share : 0}</p>
+                <p>{!isLoading ? token1share : 0}</p>
               </div>
             </div>
 
@@ -123,11 +125,13 @@ const Positions = () => {
           </div>
         </div>
       ) : (
-        <EmptyPool
-          title="No Liquidity Positions Found"
-          description="Add liquidity to a pool and view your positions here"
-          buttonText="Explore Pools"
-        />
+        !isLoading && (
+          <EmptyPool
+            title="No Liquidity Positions Found"
+            description="Add liquidity to a pool and view your positions here"
+            buttonText="Explore Pools"
+          />
+        )
       )}
 
       <RemoveLiquidityModal
