@@ -5,6 +5,7 @@ import { Work_Sans } from "next/font/google";
 
 import LayoutWrapper from "@/components/Layout/LayoutWrapper";
 import { Providers } from "@/components/Providers/Providers";
+import ReactToaster from "@/components/ReactToaster/ReactToaster";
 
 import "../styles/globals.css";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body className={`${worksans.variable} antialiased`}>
         <Providers>
           <LayoutWrapper>{children}</LayoutWrapper>
+          <ReactToaster />
         </Providers>
       </body>
     </html>
