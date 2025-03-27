@@ -152,6 +152,8 @@ const RemoveLiquidityModal = ({
               src={"/Image/usdcIcon.svg"}
               alt="icon"
               className="w-[50px] translate-x-[-10px]"
+              width={64}
+              height={64}
             />
           </div>
           <h2 className="text-2xl font-medium">WETH/USDC</h2>
@@ -211,6 +213,8 @@ const RemoveLiquidityModal = ({
                 src={"/Image/usdcIcon.svg"}
                 alt="usdcicon"
                 className="w-[25px]"
+                width={64}
+                height={64}
               ></Image>
               <p>{tokenBshare} USDC</p>
             </div>
