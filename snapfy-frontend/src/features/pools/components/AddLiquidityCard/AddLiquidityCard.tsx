@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { ChevronDownIcon } from "lucide-react";
@@ -52,6 +53,7 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
   const { data: walletClient } = useWalletClient();
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { openConnectModal } = useConnectModal();
 
   const { displayValue, value, handleInputBlur, handleInputChange } =
     useNumberInput();
@@ -86,6 +88,35 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
   const token1symbol =
     pool.token1.symbol === "WETH" ? "ETH" : pool.token1.symbol;
+
+  const ethPrice = pool.token1Price;
+  const estEthAlloc =
+    selectedToken.symbol === "ETH"
+      ? BigNumber(value / 2)
+          .toFixed(6)
+          .toString()
+      : BigNumber(value / 2)
+          .div(ethPrice)
+          .toFixed(6)
+          .toString();
+  const estEthAllocPrice = BigNumber(estEthAlloc)
+    .times(ethPrice)
+    .toFixed(2)
+    .toString();
+
+  const estTokenAlloc =
+    selectedToken.symbol === "ETH"
+      ? BigNumber(value / 2)
+          .times(ethPrice)
+          .toFixed(6)
+          .toString()
+      : BigNumber(value).div(2).toString();
+  const estTokenAllocPrice = BigNumber(estTokenAlloc).toFixed(2).toString();
+
+  const selectedTokenPrice =
+    selectedToken.symbol === "ETH"
+      ? BigNumber(value).times(ethPrice).toFixed(2).toString()
+      : value.toFixed(2);
 
   // ETH
   const handleSwapETHAndAddLiquidity = async () => {
@@ -240,7 +271,7 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
                 selectedToken.symbol === "ETH" ? 6 : 2,
               )}
             </span>
-            <span>~$0.00</span>
+            <span>~${selectedTokenPrice}</span>
           </div>
         </div>
       </div>
@@ -270,8 +301,10 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
               <span className="font-medium">{token0symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
-              <div className="text-lg font-medium">0</div>
-              <div className="text-secondary text-sm">~$0.0</div>
+              <div className="text-lg font-medium">
+                {value ? estEthAlloc : 0}
+              </div>
+              <div className="text-secondary text-sm">~${estEthAllocPrice}</div>
             </div>
           </div>
           {/* TOKEN 1 */}
@@ -287,18 +320,32 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
               <span className="font-medium">{token1symbol}</span>
             </div>
             <div className="-space-y-1 text-end">
-              <div className="text-lg font-medium">0</div>
-              <div className="text-secondary text-sm">~$0.0</div>
+              <div className="text-lg font-medium">
+                {value ? estTokenAlloc : 0}
+              </div>
+              <div className="text-secondary text-sm">
+                ~${estTokenAllocPrice}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <Button
-        className="!bg-accent-blue/20 !text-accent-blue hover:!bg-accent-blue/30 mt-2 w-full"
-        onClick={() => setReviewModal(true)}
+        disabled={address && (value === 0 || balanceFormatted < value)}
+        variant="blue"
+        className="mt-2 w-full"
+        onClick={() =>
+          address
+            ? setReviewModal(true)
+            : openConnectModal && openConnectModal()
+        }
       >
-        Review
+        {address
+          ? balanceFormatted < value
+            ? "Insufficient Balance"
+            : "Review"
+          : "Connect Wallet"}
       </Button>
 
       <ReviewPositionModal
@@ -313,6 +360,11 @@ const AddLiquidityCard = ({ poolId }: AddLiquidityCardProps) => {
             : handleSwapTokenAndAddLiquidity
         }
         disableBtn={isApproving || isAddingLiquidity}
+        amountPrice={selectedTokenPrice}
+        estEth={estEthAlloc}
+        estEthPrice={estEthAllocPrice}
+        estToken={estTokenAlloc}
+        estTokenPrice={estTokenAllocPrice}
       />
     </div>
   );

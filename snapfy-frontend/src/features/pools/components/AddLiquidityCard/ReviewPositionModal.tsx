@@ -18,6 +18,11 @@ interface ReviewPositionModalProps {
   amount: number;
   handleAddLiquidity: () => Promise<void>;
   disableBtn: boolean;
+  amountPrice: string;
+  estEth: string;
+  estEthPrice: string;
+  estToken: string;
+  estTokenPrice: string;
 }
 
 const ReviewPositionModal = ({
@@ -28,6 +33,11 @@ const ReviewPositionModal = ({
   selectedToken,
   handleAddLiquidity,
   disableBtn,
+  amountPrice,
+  estEth,
+  estEthPrice,
+  estToken,
+  estTokenPrice,
 }: ReviewPositionModalProps) => {
   const token0symbol =
     pool.token0.symbol === "WETH" ? "ETH" : pool.token0.symbol;
@@ -57,7 +67,7 @@ const ReviewPositionModal = ({
             </div>
             <div className="-space-y-1 text-end">
               <div className="text-lg font-medium">{amount}</div>
-              <div className="text-secondary text-sm">~$0.0</div>
+              <div className="text-secondary text-sm">~${amountPrice}</div>
             </div>
           </div>
         </div>
@@ -79,8 +89,8 @@ const ReviewPositionModal = ({
                 <span className="font-medium">{token0symbol}</span>
               </div>
               <div className="-space-y-1 text-end">
-                <div className="text-lg font-medium">0</div>
-                <div className="text-secondary text-sm">~$0.0</div>
+                <div className="text-lg font-medium">{estEth}</div>
+                <div className="text-secondary text-sm">~${estEthPrice}</div>
               </div>
             </div>
             {/* TOKEN 1 */}
@@ -96,8 +106,8 @@ const ReviewPositionModal = ({
                 <span className="font-medium">{token1symbol}</span>
               </div>
               <div className="-space-y-1 text-end">
-                <div className="text-lg font-medium">0</div>
-                <div className="text-secondary text-sm">~$0.0</div>
+                <div className="text-lg font-medium">{estToken}</div>
+                <div className="text-secondary text-sm">~${estTokenPrice}</div>
               </div>
             </div>
           </div>
