@@ -42,7 +42,11 @@ const Modal: React.FC<ModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className={classNames("fixed inset-0 backdrop-blur-[4px]")} />
+          <div
+            className={classNames(
+              "fixed inset-0 bg-black/50 backdrop-blur-[4px]",
+            )}
+          />
         </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -60,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
                 onClick={(e) => e.stopPropagation()}
                 className={classNames(
                   "mx-[15px] my-4 w-full transform overflow-hidden rounded-lg px-5 transition-all",
-                  "bg-background shadow-accent-blue/20 border-2 shadow",
+                  "bg-background shadow-accent-blue/20 shadow",
                   className,
                 )}
               >

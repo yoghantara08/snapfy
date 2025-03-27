@@ -10,9 +10,15 @@ interface EmptyPoolProps {
   title: string;
   description: string;
   buttonText: string;
+  onClick?: () => void;
 }
 
-const EmptyPool = ({ title, description, buttonText }: EmptyPoolProps) => {
+const EmptyPool = ({
+  title,
+  description,
+  buttonText,
+  onClick,
+}: EmptyPoolProps) => {
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2 rounded-sm border py-[50px]">
       <div className="bg-opacity-blue text-accent-blue rounded-sm px-3 py-3">
@@ -23,7 +29,10 @@ const EmptyPool = ({ title, description, buttonText }: EmptyPoolProps) => {
         <p className="text-secondary w-full md:w-[500px]">{description}</p>
       </div>
       <Link href={"/pools"} className="mt-1">
-        <Button className="!bg-opacity-blue !text-accent-blue hover:!bg-accent-blue/40 !px-10">
+        <Button
+          onClick={onClick && onClick}
+          className="!bg-opacity-blue !text-accent-blue hover:!bg-accent-blue/40 !px-10"
+        >
           {buttonText}
         </Button>
       </Link>

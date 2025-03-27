@@ -28,9 +28,9 @@ const Pools = () => {
     return <>Error</>;
   }
 
-  const filteredPoolsV2 =
+  const v2Pools =
     selectedMenu === "All Pools" || selectedMenu === "V2" ? poolsV2 || [] : [];
-  const filteredPoolsV3 =
+  const v3Pools =
     selectedMenu === "All Pools" || selectedMenu === "V3" ? poolsV3 || [] : [];
 
   const searchFilter = (pool: IUniswapV2Pool | IUniswapV3Pool) => {
@@ -44,6 +44,8 @@ const Pools = () => {
     );
   };
 
+  const filteredPoolsV2 = v2Pools.filter(searchFilter);
+  const filteredPoolsV3 = v3Pools.filter(searchFilter);
   const hasPools = filteredPoolsV2.length > 0 || filteredPoolsV3.length > 0;
 
   return (
@@ -57,10 +59,10 @@ const Pools = () => {
       />
       {hasPools ? (
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {filteredPoolsV2.filter(searchFilter).map((pool) => (
+          {filteredPoolsV2.map((pool) => (
             <PoolCardV2 key={pool.id} poolData={pool} poolVersion="v2" />
           ))}
-          {filteredPoolsV3.filter(searchFilter).map((pool) => (
+          {filteredPoolsV3.map((pool) => (
             <PoolCardV3 key={pool.id} poolData={pool} poolVersion="v3" />
           ))}
         </div>
@@ -69,6 +71,7 @@ const Pools = () => {
           title="No Liquidity Pools Found"
           description="No pools found. Try adjusting your filters or explore available liquidity pools to get started."
           buttonText="Reset Filter"
+          onClick={() => setSearch("")}
         />
       )}
     </section>
