@@ -78,7 +78,7 @@ const AddLiquidityHeader = ({
             >
               {transformAddress(14, 14, poolId)}
             </span>
-            <OpenExternalLink link={`https://etherscan.io/address/${poolId}`}>
+            <OpenExternalLink link={`https://basescan.org/address/${poolId}`}>
               <ExternalLinkIcon className="hover:text-primary size-4.5 cursor-pointer" />
             </OpenExternalLink>
           </div>
