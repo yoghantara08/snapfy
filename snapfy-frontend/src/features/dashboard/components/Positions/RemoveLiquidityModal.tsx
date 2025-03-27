@@ -45,6 +45,7 @@ interface RemoveLiquidityModal {
   tokenB?: Address;
   tokenAshare?: string;
   tokenBshare?: string;
+  refetch: () => void;
 }
 
 const RemoveLiquidityModal = ({
@@ -56,6 +57,7 @@ const RemoveLiquidityModal = ({
   tokenB,
   tokenAshare,
   tokenBshare,
+  refetch,
 }: RemoveLiquidityModal) => {
   const { data: walletClient } = useWalletClient();
   const { address } = useAccount();
@@ -106,6 +108,7 @@ const RemoveLiquidityModal = ({
           toast.error("Approval failed or canceled.");
           throw error;
         } finally {
+          refetch();
           setIsApproving(false);
           toast.dismiss(approvingToast);
         }

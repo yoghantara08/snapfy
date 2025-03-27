@@ -21,10 +21,11 @@ const pairAddress = UNISWAP_V2_POOL_IDS.ETH_USDC as Address;
 
 const Positions = () => {
   const { address } = useAccount();
-  const { data: position, isLoading } = useLiquidityPosition(
-    address as Address,
-    pairAddress,
-  );
+  const {
+    data: position,
+    isLoading,
+    refetch,
+  } = useLiquidityPosition(address as Address, pairAddress);
   const { data: pairData, isLoading: loading } =
     useUniswapV2GetPoolById(pairAddress);
 
@@ -138,6 +139,7 @@ const Positions = () => {
         tokenB={pairData?.token1.id as Address}
         tokenAshare={token0share}
         tokenBshare={token1share}
+        refetch={refetch}
       />
     </>
   );
