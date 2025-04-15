@@ -78,7 +78,7 @@ const PoolCardV3 = ({ poolData, poolVersion }: PoolCardV3Props) => {
       </div>
 
       <Link href={`/pools/${poolVersion}/${poolData.id}`}>
-        <Button className="!text-accent-blue !bg-accent-blue/20 hover:!bg-accent-blue/30 w-full">
+        <Button disabled variant="blue" className="w-full">
           + Add Liquidity
         </Button>
       </Link>
